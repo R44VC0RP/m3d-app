@@ -4,6 +4,7 @@ import { FeaturedProducts } from "@/components/featured-products"
 import { TrustedPeople } from "@/components/trusted-people"
 import { FileUpload } from "@/components/FileUpload"
 import BackgroundMask from "@/components/BackgroundMask"
+import { OtherProducts } from "@/components/other-products"
 
 function getFeaturedProducts() {
   return [
@@ -60,8 +61,34 @@ function getTestimonials() {
   ]
 }
 
+function getOtherProducts() {
+  return [
+    {
+      title: "3D Prints",
+      description: "Description for the category",
+      imageUrl: "https://placehold.co/500x500",
+    },
+    {
+      title: "Laser Cut Art",
+      description: "Another cool category",
+      imageUrl: "https://placehold.co/500x500",
+    },
+    {
+      title: "Enamel Pins",
+      description: "Cute enamel pin designs",
+      imageUrl: "https://placehold.co/500x500",
+    },
+    {
+      title: "Stickers",
+      description: "High-quality vinyl stickers",
+      imageUrl: "https://placehold.co/500x500",
+    }
+  ]
+}
+
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts()
+  const otherProducts = await getOtherProducts()
   const testimonials = await getTestimonials()
   return (
     <main>
@@ -72,6 +99,7 @@ export default async function Home() {
         <Header />
         <Hero />
         <FeaturedProducts products={featuredProducts} />
+        <OtherProducts items={otherProducts} />
         <FileUpload />
         <TrustedPeople testimonials={testimonials} />
       </div>
