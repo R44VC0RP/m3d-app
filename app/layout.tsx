@@ -14,6 +14,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="apple-mobile-web-app-title" content="Mandarin 3D" />
+      </head>
       <body className={`${overusedGrotesk.variable} antialiased`}>
         {children}
       </body>

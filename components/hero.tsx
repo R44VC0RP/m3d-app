@@ -3,7 +3,7 @@ import { Logo } from "./logo"
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden bg-background py-24">
+    <section className="relative overflow-hidden py-24">
       <div className="container relative">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center text-center">
           <Logo className="w-[48px] h-auto text-foreground mb-8" />

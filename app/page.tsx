@@ -1,6 +1,9 @@
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
 import { FeaturedProducts } from "@/components/featured-products"
+import { TrustedPeople } from "@/components/trusted-people"
+import { FileUpload } from "@/components/FileUpload"
+import BackgroundMask from "@/components/BackgroundMask"
 
 function getFeaturedProducts() {
   return [
@@ -28,16 +31,50 @@ function getFeaturedProducts() {
   ]
 }
 
+function getTestimonials() {
+  return [
+    {
+      id: "1",
+      name: "John Doe",
+      role: "Software Engineer",
+      company: "Vitalize Care",
+      quote: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      imageUrl: "https://placehold.co/500x500"
+    },
+    {
+      id: "2",
+      name: "Jane Doe",
+      role: "Software Engineer",
+      company: "Vitalize Care",
+      quote: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      imageUrl: "https://placehold.co/500x500"
+    },
+    {
+      id: "3",
+      name: "John Doe",
+      role: "Software Engineer",
+      company: "Vitalize Care",
+      quote: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      imageUrl: "https://placehold.co/500x500"
+    }
+  ]
+}
+
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts()
-  
+  const testimonials = await getTestimonials()
   return (
     <main>
+      <div className="fixed inset-0 -z-10">
+        <BackgroundMask />
+      </div>
       <div className="max-w-4xl mx-auto">
         <Header />
         <Hero />
+        <FeaturedProducts products={featuredProducts} />
+        <FileUpload />
+        <TrustedPeople testimonials={testimonials} />
       </div>
-      <FeaturedProducts products={featuredProducts} />
     </main>
   )
 }

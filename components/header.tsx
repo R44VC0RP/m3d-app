@@ -20,7 +20,7 @@ export function Header() {
 
   return (
     <header className={`sticky top-4 z-50 w-full transition-all duration-300 ${isScrolled ? 'px-4' : 'px-0'}`}>
-      <div className={`container mx-auto transition-all duration-300 ${isScrolled ? 'bg-white/80 shadow-lg backdrop-blur-lg rounded-lg' : 'bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'}`}>
+      <div className={`container mx-auto transition-all duration-300 ${isScrolled ? 'bg-white/10 shadow-lg backdrop-blur-lg rounded-lg' : ''}`}>
         <div className="flex h-14 max-w-screen-2xl items-center px-4">
           <div className="mr-4 flex">
             <Link href="/" className="mr-6 flex items-center space-x-2">
