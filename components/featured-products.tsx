@@ -15,7 +15,7 @@ interface FeaturedProductsProps {
 export function FeaturedProducts({ products }: FeaturedProductsProps) {
   return (
     <section className="w-full py-16">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <p className="text-muted-foreground">Featured Products</p>

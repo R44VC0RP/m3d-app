@@ -95,12 +95,12 @@ export default async function Home() {
       <div className="fixed inset-0 -z-10">
         <BackgroundMask />
       </div>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <Header />
         <Hero />
         <FeaturedProducts products={featuredProducts} />
         <OtherProducts items={otherProducts} />
-        <FileUpload />
+        <FileUpload currentStep={0}/>
         <TrustedPeople testimonials={testimonials} />
       </div>
     </main>
