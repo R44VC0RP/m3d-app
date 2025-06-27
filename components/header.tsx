@@ -39,6 +39,11 @@ export function Header() {
               <Button variant="link" size="medium">
                 Library
               </Button>
+              <Link href="/login">
+                <Button variant="secondary" size="medium">
+                  Login
+                </Button>
+              </Link>
               <Button variant="primary" size="medium">
                 Print Now
               </Button>
