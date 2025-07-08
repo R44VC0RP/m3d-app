@@ -8,7 +8,7 @@ interface OtherProductsProps {
 export function OtherProducts({ items }: OtherProductsProps) {
   return (
     <section className="w-full py-16">
-      <div className="max-w-4xl mx-auto px-4 flex flex-col gap-8">
+      <div className="max-w-5xl mx-auto px-4 flex flex-col gap-8">
         <div className="flex flex-col gap-2">
           <p className="text-muted-foreground">Other products</p>
           <h2 className="text-2xl font-medium tracking-tight text-foreground">

@@ -14,7 +14,7 @@ interface TrustedPeopleProps {
 export function TrustedPeople({ testimonials }: TrustedPeopleProps) {
   return (
     <section className="w-full py-6">
-      <div className="max-w-4xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         <div className="flex flex-col gap-8">
           <h2 className="text-2xl font-medium tracking-tight text-foreground">Trusted by people</h2>
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">

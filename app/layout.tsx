@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="[&::-webkit-scrollbar]:hidden">
       <head>
         <meta name="apple-mobile-web-app-title" content="Mandarin 3D" />
       </head>
