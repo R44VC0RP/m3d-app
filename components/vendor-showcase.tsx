@@ -12,6 +12,34 @@ export default function VendorShowcase() {
           <div className="grid grid-cols-2 grid-rows-2 gap-8 md:grid-cols-4">
             <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
               <img
+                src="/vendors/vercel.png"
+                alt="Vendor 1"
+                className="h-[24px]"
+              />
+            </div>
+            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
+              <img
+                src="/vendors/uploadthing.png"
+                alt="Vendor 1"
+                className="h-[28px]"
+              />
+            </div>
+            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
+              <img
+                src="/vendors/ping.png"
+                alt="Vendor 1"
+                className="h-[36px]"
+              />
+            </div>
+            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
+              <img
+                src="/vendors/t3chat.png"
+                alt="Vendor 1"
+                className="h-[22px]"
+              />
+            </div>
+            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
+              <img
                 src="/vendors/0emailicon.png"
                 alt="Vendor 1"
                 className="h-[24px]"
@@ -46,34 +74,6 @@ export default function VendorShowcase() {
                 src="/vendors/neon-sign.png"
                 alt="Vendor 1"
                 className="h-[50px]"
-              />
-            </div>
-            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
-              <img
-                src="/vendors/ping.png"
-                alt="Vendor 1"
-                className="h-[36px]"
-              />
-            </div>
-            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
-              <img
-                src="/vendors/t3chat.png"
-                alt="Vendor 1"
-                className="h-[22px]"
-              />
-            </div>
-            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
-              <img
-                src="/vendors/uploadthing.png"
-                alt="Vendor 1"
-                className="h-[28px]"
-              />
-            </div>
-            <div className="col-span-1 row-span-1 flex items-center justify-center gap-2">
-              <img
-                src="/vendors/vercel.png"
-                alt="Vendor 1"
-                className="h-[24px]"
               />
             </div>
           </div>

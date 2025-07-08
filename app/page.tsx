@@ -171,9 +171,9 @@ export default async function Home() {
         <FeaturedProducts products={featuredProducts} />
         <OtherProducts items={otherProducts} />
         <CustomerShowcase items={customerShowcase} />
+        <VendorShowcase />
         <FileUpload currentStep={0} />
         <TrustedPeople testimonials={testimonials} />
-        <VendorShowcase />
       </div>
       <ScrollButton />
     </main>
