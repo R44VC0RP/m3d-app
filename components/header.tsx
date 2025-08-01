@@ -36,9 +36,16 @@ export function Header() {
               <Button variant="link" size="medium">
                 Sales
               </Button>
-              <Button variant="link" size="medium">
-                Library
-              </Button>
+              <Link href="/files">
+                <Button variant="link" size="medium">
+                  Files
+                </Button>
+              </Link>
+              <Link href="/cart">
+                <Button variant="outline" size="medium">
+                  Cart
+                </Button>
+              </Link>
               <Button variant="primary" size="medium">
                 Print Now
               </Button>
