@@ -42,7 +42,7 @@ export function Header() {
                 </Button>
               </Link>
               <Link href="/cart">
-                <Button variant="outline" size="medium">
+                <Button variant="secondary" size="medium">
                   Cart
                 </Button>
               </Link>

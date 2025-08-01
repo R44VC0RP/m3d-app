@@ -26,10 +26,10 @@ interface FileDELETEResponse {
 // GET - Retrieve a specific file by ID
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<FileGETResponse>> {
   try {
-    const { id } = params;
+    const { id } = await params;
     const db = await getDatabase();
     
     return new Promise((resolve) => {
@@ -89,10 +89,10 @@ export async function GET(
 // DELETE - Remove a specific file by ID
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<FileDELETEResponse>> {
   try {
-    const { id } = params;
+    const { id } = await params;
     const db = await getDatabase();
     
     return new Promise((resolve) => {
