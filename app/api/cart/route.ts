@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, CartItem, FileAddon } from '@/lib/database';
-import { v4 as uuidv4 } from 'uuid';
+import { db, cartItems, files, colors, fileAddons, cartAddons } from '@/lib/db';
+import { CartItem, FileAddon } from '@/lib/types';
+import { eq, desc } from 'drizzle-orm';
 
 // Extended cart item with file details and addons
 interface CartItemWithDetails extends CartItem {
@@ -54,105 +55,69 @@ interface CartDELETEResponse {
 // GET - Retrieve all cart items with file details and addons
 export async function GET(request: NextRequest): Promise<NextResponse<CartGETResponse>> {
   try {
-    const db = await getDatabase();
+    // Get cart items with file details using Drizzle's query API
+    const cartItemsWithFiles = await db
+      .select({
+        cartItem: cartItems,
+        file: files,
+        color: colors,
+      })
+      .from(cartItems)
+      .innerJoin(files, eq(cartItems.fileId, files.id))
+      .innerJoin(colors, eq(cartItems.color, colors.id))
+      .orderBy(desc(cartItems.createdAt));
+
+    // Get addons for each cart item
+    const cartItemsWithDetails: CartItemWithDetails[] = [];
     
-    return new Promise((resolve) => {
-      // Get cart items with file details
-      db.all(
-        `SELECT 
-          ci.id, ci.file_id, ci.quality, ci.quantity, ci.color, ci.created_at, ci.updated_at,
-          f.name as file_name, f.filetype, f.filename, 
-          f.dimensions_x, f.dimensions_y, f.dimensions_z, f.mass
-         FROM cart_items ci
-         JOIN files f ON ci.file_id = f.id
-         ORDER BY ci.created_at DESC`,
-        [],
-        async (err, cartRows: any[]) => {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              data: [],
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    for (const row of cartItemsWithFiles) {
+      const addonsData = await db
+        .select({
+          addon: fileAddons,
+        })
+        .from(cartAddons)
+        .innerJoin(fileAddons, eq(cartAddons.addonId, fileAddons.id))
+        .where(eq(cartAddons.cartItemId, row.cartItem.id));
 
-          // Get addons for each cart item
-          const cartItemsWithDetails: CartItemWithDetails[] = [];
-          let processedCount = 0;
+      const formattedAddons: FileAddon[] = addonsData.map(item => ({
+        id: item.addon.id,
+        name: item.addon.name,
+        description: item.addon.description,
+        price: item.addon.price,
+        is_active: item.addon.isActive,
+        created_at: item.addon.createdAt.toISOString(),
+        updated_at: item.addon.updatedAt.toISOString()
+      }));
 
-          if (cartRows.length === 0) {
-            resolve(NextResponse.json({
-              success: true,
-              data: []
-            }));
-            return;
-          }
+      const cartItemWithDetails: CartItemWithDetails = {
+        id: row.cartItem.id,
+        file_id: row.cartItem.fileId,
+        quality: row.cartItem.quality,
+        quantity: row.cartItem.quantity,
+        color: row.cartItem.color,
+        created_at: row.cartItem.createdAt.toISOString(),
+        updated_at: row.cartItem.updatedAt.toISOString(),
+        file: {
+          id: row.file.id,
+          name: row.file.name,
+          filetype: row.file.filetype,
+          filename: row.file.filename,
+          dimensions: {
+            x: row.file.dimensionsX,
+            y: row.file.dimensionsY,
+            z: row.file.dimensionsZ
+          },
+          mass: row.file.mass
+        },
+        addons: formattedAddons
+      };
 
-          for (const row of cartRows) {
-            db.all(
-              `SELECT fa.id, fa.name, fa.description, fa.price, fa.is_active, fa.created_at, fa.updated_at
-               FROM file_addons fa
-               JOIN cart_addons ca ON fa.id = ca.addon_id
-               WHERE ca.cart_item_id = ?`,
-              [row.id],
-              (addonErr, addonRows: any[]) => {
-                if (addonErr) {
-                  resolve(NextResponse.json({
-                    success: false,
-                    data: [],
-                    error: addonErr.message
-                  }, { status: 500 }));
-                  return;
-                }
+      cartItemsWithDetails.push(cartItemWithDetails);
+    }
 
-                const addons: FileAddon[] = addonRows.map(addon => ({
-                  id: addon.id,
-                  name: addon.name,
-                  description: addon.description,
-                  price: addon.price,
-                  is_active: Boolean(addon.is_active),
-                  created_at: addon.created_at,
-                  updated_at: addon.updated_at
-                }));
-
-                const cartItem: CartItemWithDetails = {
-                  id: row.id,
-                  file_id: row.file_id,
-                  quality: row.quality,
-                  quantity: row.quantity,
-                  color: row.color,
-                  created_at: row.created_at,
-                  updated_at: row.updated_at,
-                  file: {
-                    id: row.file_id,
-                    name: row.file_name,
-                    filetype: row.filetype,
-                    filename: row.filename,
-                    dimensions: {
-                      x: row.dimensions_x,
-                      y: row.dimensions_y,
-                      z: row.dimensions_z
-                    },
-                    mass: row.mass
-                  },
-                  addons
-                };
-
-                cartItemsWithDetails.push(cartItem);
-                processedCount++;
-
-                if (processedCount === cartRows.length) {
-                  resolve(NextResponse.json({
-                    success: true,
-                    data: cartItemsWithDetails
-                  }));
-                }
-              }
-            );
-          }
-        }
-      );
+    return NextResponse.json({
+      success: true,
+      data: cartItemsWithDetails
     });
   } catch (error) {
     return NextResponse.json({
@@ -193,81 +158,101 @@ export async function POST(request: NextRequest): Promise<NextResponse<CartPOSTR
       }, { status: 400 });
     }
 
-    const db = await getDatabase();
-    const cartItemId = uuidv4();
-    const now = new Date().toISOString();
+    // First verify the file exists
+    const [existingFile] = await db.select().from(files).where(eq(files.id, body.file_id));
 
-    return new Promise((resolve) => {
-      // First verify the file exists
-      db.get('SELECT id, name, filetype, filename, dimensions_x, dimensions_y, dimensions_z, mass FROM files WHERE id = ?', 
-        [body.file_id], 
-        (fileErr, fileRow: any) => {
-          if (fileErr) {
-            resolve(NextResponse.json({
-              success: false,
-              error: fileErr.message
-            }, { status: 500 }));
-            return;
-          }
+    if (!existingFile) {
+      return NextResponse.json({
+        success: false,
+        error: 'File not found'
+      }, { status: 404 });
+    }
 
-          if (!fileRow) {
-            resolve(NextResponse.json({
-              success: false,
-              error: 'File not found'
-            }, { status: 404 }));
-            return;
-          }
+    // Insert cart item
+    const [insertedCartItem] = await db.insert(cartItems).values({
+      fileId: body.file_id,
+      quality: quality,
+      quantity: quantity,
+      color: body.color,
+    }).returning();
 
-          // Insert cart item
-          db.run(
-            `INSERT INTO cart_items (id, file_id, quality, quantity, color, created_at, updated_at) 
-             VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [cartItemId, body.file_id, quality, quantity, body.color, now, now],
-            function(cartErr) {
-              if (cartErr) {
-                resolve(NextResponse.json({
-                  success: false,
-                  error: cartErr.message
-                }, { status: 500 }));
-                return;
-              }
+    // Insert addons if provided
+    if (body.addon_ids && body.addon_ids.length > 0) {
+      const addonInserts = body.addon_ids.map(addonId => ({
+        cartItemId: insertedCartItem.id,
+        addonId: addonId,
+      }));
+      
+      await db.insert(cartAddons).values(addonInserts);
+    }
 
-              // Insert addons if provided
-              if (body.addon_ids && body.addon_ids.length > 0) {
-                let addonInsertCount = 0;
-                const totalAddons = body.addon_ids.length;
+    // Get the complete cart item with details
+    const cartItemWithFile = await db
+      .select({
+        cartItem: cartItems,
+        file: files,
+        color: colors,
+      })
+      .from(cartItems)
+      .innerJoin(files, eq(cartItems.fileId, files.id))
+      .innerJoin(colors, eq(cartItems.color, colors.id))
+      .where(eq(cartItems.id, insertedCartItem.id));
 
-                body.addon_ids.forEach(addonId => {
-                  const cartAddonId = uuidv4();
-                  db.run(
-                    'INSERT INTO cart_addons (id, cart_item_id, addon_id, created_at) VALUES (?, ?, ?, ?)',
-                    [cartAddonId, cartItemId, addonId, now],
-                    (addonInsertErr) => {
-                      if (addonInsertErr) {
-                        resolve(NextResponse.json({
-                          success: false,
-                          error: addonInsertErr.message
-                        }, { status: 500 }));
-                        return;
-                      }
+    if (cartItemWithFile.length === 0) {
+      return NextResponse.json({
+        success: false,
+        error: 'Failed to retrieve created cart item'
+      }, { status: 500 });
+    }
 
-                      addonInsertCount++;
-                      if (addonInsertCount === totalAddons) {
-                        // Return the created cart item with details
-                        returnCartItemWithDetails(resolve, db, cartItemId, fileRow, now);
-                      }
-                    }
-                  );
-                });
-              } else {
-                // No addons, return the cart item
-                returnCartItemWithDetails(resolve, db, cartItemId, fileRow, now);
-              }
-            }
-          );
-        }
-      );
-    });
+    const row = cartItemWithFile[0];
+
+    // Get addons for this cart item
+    const addonsData = await db
+      .select({
+        addon: fileAddons,
+      })
+      .from(cartAddons)
+      .innerJoin(fileAddons, eq(cartAddons.addonId, fileAddons.id))
+      .where(eq(cartAddons.cartItemId, insertedCartItem.id));
+
+    const formattedAddons: FileAddon[] = addonsData.map(item => ({
+      id: item.addon.id,
+      name: item.addon.name,
+      description: item.addon.description,
+      price: item.addon.price,
+      is_active: item.addon.isActive,
+      created_at: item.addon.createdAt.toISOString(),
+      updated_at: item.addon.updatedAt.toISOString()
+    }));
+
+    const cartItemWithDetails: CartItemWithDetails = {
+      id: row.cartItem.id,
+      file_id: row.cartItem.fileId,
+      quality: row.cartItem.quality,
+      quantity: row.cartItem.quantity,
+      color: row.cartItem.color,
+      created_at: row.cartItem.createdAt.toISOString(),
+      updated_at: row.cartItem.updatedAt.toISOString(),
+      file: {
+        id: row.file.id,
+        name: row.file.name,
+        filetype: row.file.filetype,
+        filename: row.file.filename,
+        dimensions: {
+          x: row.file.dimensionsX,
+          y: row.file.dimensionsY,
+          z: row.file.dimensionsZ
+        },
+        mass: row.file.mass
+      },
+      addons: formattedAddons
+    };
+
+    return NextResponse.json({
+      success: true,
+      data: cartItemWithDetails
+    }, { status: 201 });
   } catch (error) {
     return NextResponse.json({
       success: false,
@@ -279,35 +264,15 @@ export async function POST(request: NextRequest): Promise<NextResponse<CartPOSTR
 // DELETE - Clear entire cart
 export async function DELETE(request: NextRequest): Promise<NextResponse<CartDELETEResponse>> {
   try {
-    const db = await getDatabase();
+    // Delete cart addons first (cascading will handle this automatically due to foreign key constraints)
+    await db.delete(cartAddons);
     
-    return new Promise((resolve) => {
-      // Delete cart addons first (foreign key constraint)
-      db.run('DELETE FROM cart_addons', [], (addonErr) => {
-        if (addonErr) {
-          resolve(NextResponse.json({
-            success: false,
-            error: addonErr.message
-          }, { status: 500 }));
-          return;
-        }
+    // Then delete cart items
+    const deletedItems = await db.delete(cartItems);
 
-        // Then delete cart items
-        db.run('DELETE FROM cart_items', [], function(cartErr) {
-          if (cartErr) {
-            resolve(NextResponse.json({
-              success: false,
-              error: cartErr.message
-            }, { status: 500 }));
-            return;
-          }
-
-          resolve(NextResponse.json({
-            success: true,
-            message: `Cleared ${this.changes} items from cart`
-          }));
-        });
-      });
+    return NextResponse.json({
+      success: true,
+      message: `Cleared cart successfully`
     });
   } catch (error) {
     return NextResponse.json({
@@ -317,82 +282,3 @@ export async function DELETE(request: NextRequest): Promise<NextResponse<CartDEL
   }
 }
 
-// Helper function to return cart item with details
-function returnCartItemWithDetails(
-  resolve: (response: NextResponse<CartPOSTResponse>) => void,
-  db: any,
-  cartItemId: string,
-  fileRow: any,
-  now: string
-) {
-  // Get the addons for this cart item
-  db.all(
-    `SELECT fa.id, fa.name, fa.description, fa.price, fa.is_active, fa.created_at, fa.updated_at
-     FROM file_addons fa
-     JOIN cart_addons ca ON fa.id = ca.addon_id
-     WHERE ca.cart_item_id = ?`,
-    [cartItemId],
-    (addonErr: any, addonRows: any[]) => {
-      if (addonErr) {
-        resolve(NextResponse.json({
-          success: false,
-          error: addonErr.message
-        }, { status: 500 }));
-        return;
-      }
-
-      const addons: FileAddon[] = addonRows.map(addon => ({
-        id: addon.id,
-        name: addon.name,
-        description: addon.description,
-        price: addon.price,
-        is_active: Boolean(addon.is_active),
-        created_at: addon.created_at,
-        updated_at: addon.updated_at
-      }));
-
-      // Get the cart item details
-      db.get(
-        'SELECT id, file_id, quality, quantity, color, created_at, updated_at FROM cart_items WHERE id = ?',
-        [cartItemId],
-        (cartGetErr: any, cartRow: any) => {
-          if (cartGetErr) {
-            resolve(NextResponse.json({
-              success: false,
-              error: cartGetErr.message
-            }, { status: 500 }));
-            return;
-          }
-
-          const cartItemWithDetails: CartItemWithDetails = {
-            id: cartRow.id,
-            file_id: cartRow.file_id,
-            quality: cartRow.quality,
-            quantity: cartRow.quantity,
-            color: cartRow.color,
-            created_at: cartRow.created_at,
-            updated_at: cartRow.updated_at,
-            file: {
-              id: fileRow.id,
-              name: fileRow.name,
-              filetype: fileRow.filetype,
-              filename: fileRow.filename,
-              dimensions: {
-                x: fileRow.dimensions_x,
-                y: fileRow.dimensions_y,
-                z: fileRow.dimensions_z
-              },
-              mass: fileRow.mass
-            },
-            addons
-          };
-
-          resolve(NextResponse.json({
-            success: true,
-            data: cartItemWithDetails
-          }, { status: 201 }));
-        }
-      );
-    }
-  );
-}

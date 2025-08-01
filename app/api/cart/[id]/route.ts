@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase } from '@/lib/database';
+import { db, cartItems, cartAddons } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 
 // Request types
 interface CartItemDELETERequest {
@@ -20,54 +21,26 @@ export async function DELETE(
 ): Promise<NextResponse<CartItemDELETEResponse>> {
   try {
     const { id } = await params;
-    const db = await getDatabase();
     
-    return new Promise((resolve) => {
-      // First check if cart item exists
-      db.get('SELECT id FROM cart_items WHERE id = ?', [id], (err, row) => {
-        if (err) {
-          resolve(NextResponse.json({
-            success: false,
-            error: err.message
-          }, { status: 500 }));
-          return;
-        }
+    // First check if cart item exists
+    const [existingCartItem] = await db.select().from(cartItems).where(eq(cartItems.id, id));
 
-        if (!row) {
-          resolve(NextResponse.json({
-            success: false,
-            error: 'Cart item not found'
-          }, { status: 404 }));
-          return;
-        }
+    if (!existingCartItem) {
+      return NextResponse.json({
+        success: false,
+        error: 'Cart item not found'
+      }, { status: 404 });
+    }
 
-        // Delete cart addons first (foreign key constraint)
-        db.run('DELETE FROM cart_addons WHERE cart_item_id = ?', [id], (addonErr) => {
-          if (addonErr) {
-            resolve(NextResponse.json({
-              success: false,
-              error: addonErr.message
-            }, { status: 500 }));
-            return;
-          }
+    // Delete cart addons first (foreign key constraint)
+    await db.delete(cartAddons).where(eq(cartAddons.cartItemId, id));
 
-          // Then delete the cart item
-          db.run('DELETE FROM cart_items WHERE id = ?', [id], function(cartErr) {
-            if (cartErr) {
-              resolve(NextResponse.json({
-                success: false,
-                error: cartErr.message
-              }, { status: 500 }));
-              return;
-            }
+    // Then delete the cart item
+    await db.delete(cartItems).where(eq(cartItems.id, id));
 
-            resolve(NextResponse.json({
-              success: true,
-              message: 'Cart item deleted successfully'
-            }));
-          });
-        });
-      });
+    return NextResponse.json({
+      success: true,
+      message: 'Cart item deleted successfully'
     });
   } catch (error) {
     return NextResponse.json({

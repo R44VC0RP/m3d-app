@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, File } from '@/lib/database';
-import { v4 as uuidv4 } from 'uuid';
+import { db, files, NewFile } from '@/lib/db';
+import { File } from '@/lib/types';
+import { desc } from 'drizzle-orm';
 
 // Request types
 interface FilesGETRequest {
@@ -36,46 +37,28 @@ interface FilesPOSTResponse {
 // GET - Retrieve all files
 export async function GET(request: NextRequest): Promise<NextResponse<FilesGETResponse>> {
   try {
-    const db = await getDatabase();
+    const allFiles = await db.select().from(files).orderBy(desc(files.createdAt));
     
-    return new Promise((resolve) => {
-      db.all(
-        `SELECT id, name, filetype, filename, dimensions_x, dimensions_y, dimensions_z, 
-         mass, slicing_status, metadata, created_at, updated_at FROM files ORDER BY created_at DESC`,
-        [],
-        (err, rows: any[]) => {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              data: [],
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    const formattedFiles: File[] = allFiles.map(file => ({
+      id: file.id,
+      name: file.name,
+      filetype: file.filetype,
+      filename: file.filename,
+      dimensions: {
+        x: file.dimensionsX,
+        y: file.dimensionsY,
+        z: file.dimensionsZ
+      },
+      mass: file.mass,
+      slicing_status: file.slicingStatus,
+      metadata: JSON.parse(file.metadata || '{}'),
+      created_at: file.createdAt.toISOString(),
+      updated_at: file.updatedAt.toISOString()
+    }));
 
-          const files: File[] = rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            filetype: row.filetype,
-            filename: row.filename,
-            dimensions: {
-              x: row.dimensions_x,
-              y: row.dimensions_y,
-              z: row.dimensions_z
-            },
-            mass: row.mass,
-            slicing_status: row.slicing_status,
-            metadata: JSON.parse(row.metadata || '{}'),
-            created_at: row.created_at,
-            updated_at: row.updated_at
-          }));
-
-          resolve(NextResponse.json({
-            success: true,
-            data: files
-          }));
-        }
-      );
+    return NextResponse.json({
+      success: true,
+      data: formattedFiles
     });
   } catch (error) {
     return NextResponse.json({
@@ -113,58 +96,41 @@ export async function POST(request: NextRequest): Promise<NextResponse<FilesPOST
       }, { status: 400 });
     }
 
-    const db = await getDatabase();
-    const fileId = uuidv4();
-    const now = new Date().toISOString();
+    const newFileData: NewFile = {
+      name: body.name,
+      filetype: body.filetype,
+      filename: body.filename,
+      dimensionsX: body.dimensions.x,
+      dimensionsY: body.dimensions.y,
+      dimensionsZ: body.dimensions.z,
+      mass: body.mass,
+      slicingStatus: 'pending',
+      metadata: JSON.stringify(body.metadata || {}),
+    };
 
-    return new Promise((resolve) => {
-      db.run(
-        `INSERT INTO files (id, name, filetype, filename, dimensions_x, dimensions_y, dimensions_z, 
-         mass, slicing_status, metadata, created_at, updated_at) 
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          fileId,
-          body.name,
-          body.filetype,
-          body.filename,
-          body.dimensions.x,
-          body.dimensions.y,
-          body.dimensions.z,
-          body.mass,
-          'pending',
-          JSON.stringify(body.metadata || {}),
-          now,
-          now
-        ],
-        function(err) {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    const [insertedFile] = await db.insert(files).values(newFileData).returning();
 
-          const newFile: File = {
-            id: fileId,
-            name: body.name,
-            filetype: body.filetype,
-            filename: body.filename,
-            dimensions: body.dimensions,
-            mass: body.mass,
-            slicing_status: 'pending',
-            metadata: body.metadata || {},
-            created_at: now,
-            updated_at: now
-          };
+    const formattedFile: File = {
+      id: insertedFile.id,
+      name: insertedFile.name,
+      filetype: insertedFile.filetype,
+      filename: insertedFile.filename,
+      dimensions: {
+        x: insertedFile.dimensionsX,
+        y: insertedFile.dimensionsY,
+        z: insertedFile.dimensionsZ
+      },
+      mass: insertedFile.mass,
+      slicing_status: insertedFile.slicingStatus,
+      metadata: JSON.parse(insertedFile.metadata || '{}'),
+      created_at: insertedFile.createdAt.toISOString(),
+      updated_at: insertedFile.updatedAt.toISOString()
+    };
 
-          resolve(NextResponse.json({
-            success: true,
-            data: newFile
-          }, { status: 201 }));
-        }
-      );
-    });
+    return NextResponse.json({
+      success: true,
+      data: formattedFile
+    }, { status: 201 });
   } catch (error) {
     return NextResponse.json({
       success: false,

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, Color } from '@/lib/database';
+import { db, colors } from '@/lib/db';
+import { Color } from '@/lib/types';
+import { eq, asc } from 'drizzle-orm';
 
 // Request types
 interface ColorsGETRequest {
@@ -16,38 +18,24 @@ interface ColorsGETResponse {
 // GET - Retrieve all available colors
 export async function GET(request: NextRequest): Promise<NextResponse<ColorsGETResponse>> {
   try {
-    const db = await getDatabase();
-    
-    return new Promise((resolve) => {
-      db.all(
-        `SELECT id, name, hex_code, is_available, created_at, updated_at 
-         FROM colors WHERE is_available = 1 ORDER BY name ASC`,
-        [],
-        (err, rows: any[]) => {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              data: [],
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    const availableColors = await db
+      .select()
+      .from(colors)
+      .where(eq(colors.isAvailable, true))
+      .orderBy(asc(colors.name));
 
-          const colors: Color[] = rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            hex_code: row.hex_code,
-            is_available: Boolean(row.is_available),
-            created_at: row.created_at,
-            updated_at: row.updated_at
-          }));
+    const formattedColors: Color[] = availableColors.map(color => ({
+      id: color.id,
+      name: color.name,
+      hex_code: color.hexCode,
+      is_available: color.isAvailable,
+      created_at: color.createdAt.toISOString(),
+      updated_at: color.updatedAt.toISOString()
+    }));
 
-          resolve(NextResponse.json({
-            success: true,
-            data: colors
-          }));
-        }
-      );
+    return NextResponse.json({
+      success: true,
+      data: formattedColors
     });
   } catch (error) {
     return NextResponse.json({

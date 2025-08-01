@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, FileAddon } from '@/lib/database';
+import { db, fileAddons } from '@/lib/db';
+import { FileAddon } from '@/lib/types';
+import { eq, asc } from 'drizzle-orm';
 
 // Request types
 interface AddonsGETRequest {
@@ -16,39 +18,25 @@ interface AddonsGETResponse {
 // GET - Retrieve all active file addons
 export async function GET(request: NextRequest): Promise<NextResponse<AddonsGETResponse>> {
   try {
-    const db = await getDatabase();
-    
-    return new Promise((resolve) => {
-      db.all(
-        `SELECT id, name, description, price, is_active, created_at, updated_at 
-         FROM file_addons WHERE is_active = 1 ORDER BY name ASC`,
-        [],
-        (err, rows: any[]) => {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              data: [],
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    const activeAddons = await db
+      .select()
+      .from(fileAddons)
+      .where(eq(fileAddons.isActive, true))
+      .orderBy(asc(fileAddons.name));
 
-          const addons: FileAddon[] = rows.map(row => ({
-            id: row.id,
-            name: row.name,
-            description: row.description,
-            price: row.price,
-            is_active: Boolean(row.is_active),
-            created_at: row.created_at,
-            updated_at: row.updated_at
-          }));
+    const formattedAddons: FileAddon[] = activeAddons.map(addon => ({
+      id: addon.id,
+      name: addon.name,
+      description: addon.description,
+      price: addon.price,
+      is_active: addon.isActive,
+      created_at: addon.createdAt.toISOString(),
+      updated_at: addon.updatedAt.toISOString()
+    }));
 
-          resolve(NextResponse.json({
-            success: true,
-            data: addons
-          }));
-        }
-      );
+    return NextResponse.json({
+      success: true,
+      data: formattedAddons
     });
   } catch (error) {
     return NextResponse.json({

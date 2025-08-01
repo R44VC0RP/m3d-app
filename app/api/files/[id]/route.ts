@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDatabase, File } from '@/lib/database';
+import { db, files } from '@/lib/db';
+import { File } from '@/lib/types';
+import { eq } from 'drizzle-orm';
 
 // Request types
 interface FileGETRequest {
@@ -30,53 +32,36 @@ export async function GET(
 ): Promise<NextResponse<FileGETResponse>> {
   try {
     const { id } = await params;
-    const db = await getDatabase();
     
-    return new Promise((resolve) => {
-      db.get(
-        `SELECT id, name, filetype, filename, dimensions_x, dimensions_y, dimensions_z, 
-         mass, slicing_status, metadata, created_at, updated_at FROM files WHERE id = ?`,
-        [id],
-        (err, row: any) => {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    const [file] = await db.select().from(files).where(eq(files.id, id));
 
-          if (!row) {
-            resolve(NextResponse.json({
-              success: false,
-              error: 'File not found'
-            }, { status: 404 }));
-            return;
-          }
+    if (!file) {
+      return NextResponse.json({
+        success: false,
+        error: 'File not found'
+      }, { status: 404 });
+    }
 
-          const file: File = {
-            id: row.id,
-            name: row.name,
-            filetype: row.filetype,
-            filename: row.filename,
-            dimensions: {
-              x: row.dimensions_x,
-              y: row.dimensions_y,
-              z: row.dimensions_z
-            },
-            mass: row.mass,
-            slicing_status: row.slicing_status,
-            metadata: JSON.parse(row.metadata || '{}'),
-            created_at: row.created_at,
-            updated_at: row.updated_at
-          };
+    const formattedFile: File = {
+      id: file.id,
+      name: file.name,
+      filetype: file.filetype,
+      filename: file.filename,
+      dimensions: {
+        x: file.dimensionsX,
+        y: file.dimensionsY,
+        z: file.dimensionsZ
+      },
+      mass: file.mass,
+      slicing_status: file.slicingStatus,
+      metadata: JSON.parse(file.metadata || '{}'),
+      created_at: file.createdAt.toISOString(),
+      updated_at: file.updatedAt.toISOString()
+    };
 
-          resolve(NextResponse.json({
-            success: true,
-            data: file
-          }));
-        }
-      );
+    return NextResponse.json({
+      success: true,
+      data: formattedFile
     });
   } catch (error) {
     return NextResponse.json({
@@ -93,43 +78,23 @@ export async function DELETE(
 ): Promise<NextResponse<FileDELETEResponse>> {
   try {
     const { id } = await params;
-    const db = await getDatabase();
     
-    return new Promise((resolve) => {
-      // First check if file exists
-      db.get('SELECT id FROM files WHERE id = ?', [id], (err, row) => {
-        if (err) {
-          resolve(NextResponse.json({
-            success: false,
-            error: err.message
-          }, { status: 500 }));
-          return;
-        }
+    // First check if file exists
+    const [existingFile] = await db.select().from(files).where(eq(files.id, id));
 
-        if (!row) {
-          resolve(NextResponse.json({
-            success: false,
-            error: 'File not found'
-          }, { status: 404 }));
-          return;
-        }
+    if (!existingFile) {
+      return NextResponse.json({
+        success: false,
+        error: 'File not found'
+      }, { status: 404 });
+    }
 
-        // Delete the file
-        db.run('DELETE FROM files WHERE id = ?', [id], function(err) {
-          if (err) {
-            resolve(NextResponse.json({
-              success: false,
-              error: err.message
-            }, { status: 500 }));
-            return;
-          }
+    // Delete the file
+    await db.delete(files).where(eq(files.id, id));
 
-          resolve(NextResponse.json({
-            success: true,
-            message: 'File deleted successfully'
-          }));
-        });
-      });
+    return NextResponse.json({
+      success: true,
+      message: 'File deleted successfully'
     });
   } catch (error) {
     return NextResponse.json({
