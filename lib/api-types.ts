@@ -167,19 +167,19 @@ export interface CartGetResponse {
       };
       quantity: number;
       quality: string;
-      colorId?: string;
+      colorId?: string | null;
       color?: {
         id: string;
         name: string;
         hexCode: string;
         available: boolean;
-      };
+      } | null;
       addons: Array<{
         id: string;
         addon: {
           id: string;
           name: string;
-          description?: string;
+          description?: string | null;
           price: number;
           type: string;
         };
@@ -208,7 +208,7 @@ export interface CartPostResponse {
     fileId: string;
     quantity: number;
     quality: string;
-    colorId?: string;
+    colorId?: string | null;
     addons: Array<{
       id: string;
       addonId: string;
@@ -247,7 +247,7 @@ export interface CartPutResponse {
     fileId: string;
     quantity: number;
     quality: string;
-    colorId?: string;
+    colorId?: string | null;
     addons: Array<{
       id: string;
       addonId: string;
@@ -268,7 +268,7 @@ export interface AddonGetResponse {
   data?: {
     id: string;
     name: string;
-    description?: string;
+    description?: string | null;
     price: number;
     type: string;
     createdAt: Date;
@@ -276,7 +276,7 @@ export interface AddonGetResponse {
   } | Array<{
     id: string;
     name: string;
-    description?: string;
+    description?: string | null;
     price: number;
     type: string;
     createdAt: Date;
@@ -297,7 +297,7 @@ export interface AddonPostResponse {
   data?: {
     id: string;
     name: string;
-    description?: string;
+    description?: string | null;
     price: number;
     type: string;
     createdAt: Date;

@@ -270,7 +270,7 @@ export default function FilePage() {
               </div>
 
               {/* Color Selection */}
-              {colors.length > 0 && (
+              {Array.isArray(colors) && colors.length > 0 && (
                 <div>
                   <label className="block text-lg font-medium mb-3">Color (Optional)</label>
                   <div className="grid grid-cols-8 gap-2">
@@ -306,7 +306,7 @@ export default function FilePage() {
               )}
 
               {/* Addons */}
-              {addons.length > 0 && (
+              {Array.isArray(addons) && addons.length > 0 && (
                 <div>
                   <label className="block text-lg font-medium mb-3">Add-ons</label>
                   <div className="space-y-2">

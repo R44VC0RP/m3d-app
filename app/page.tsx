@@ -189,21 +189,19 @@ export default function Home() {
       </div>
       <div className="relative">
         <div className="absolute top-1/2 left-0 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-[#FF4500] rounded-full blur-[200px] opacity-10"></div>
-        <BackgroundMask>
-          <div id="products" className="container mx-auto px-4 py-16">
-            <h2 className="text-4xl font-bold text-center mb-12">Available Files</h2>
-            <FileGrid />
-          </div>
-        </BackgroundMask>
+        <div id="products" className="container mx-auto px-4 py-16">
+          <h2 className="text-4xl font-bold text-center mb-12">Available Files</h2>
+          <FileGrid />
+        </div>
       </div>
       <FeaturedProducts products={getFeaturedProducts()} />
       <TrustedPeople testimonials={getTestimonials()} />
       <div className="relative">
         <div className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-[#FF4500] rounded-full blur-[200px] opacity-10"></div>
-        <FileUpload />
+        <FileUpload currentStep={0} />
       </div>
-      <OtherProducts products={getOtherProducts()} />
-      <CustomerShowcase customers={getCustomerData()} />
+      <OtherProducts items={getOtherProducts()} />
+      <CustomerShowcase items={getCustomerData()} />
       <VendorShowcase />
       <ScrollButton />
     </main>

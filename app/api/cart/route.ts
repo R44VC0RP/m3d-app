@@ -110,22 +110,32 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if item already exists in cart
-    const existingItem = await prisma.cartItem.findUnique({
-      where: {
-        cartId_fileId_quality_colorId: {
-          cartId: cart.id,
-          fileId: body.fileId,
-          quality: quality,
-          colorId: body.colorId || null
-        }
-      }
-    });
+    const existingItem = body.colorId 
+      ? await prisma.cartItem.findFirst({
+          where: {
+            cartId: cart.id,
+            fileId: body.fileId,
+            quality: quality,
+            colorId: body.colorId
+          }
+        })
+      : await prisma.cartItem.findFirst({
+          where: {
+            cartId: cart.id,
+            fileId: body.fileId,
+            quality: quality,
+            colorId: null
+          }
+        });
 
     if (existingItem) {
       // Update quantity if item exists
       const updatedItem = await prisma.cartItem.update({
         where: { id: existingItem.id },
-        data: { quantity: existingItem.quantity + quantity }
+        data: { quantity: existingItem.quantity + quantity },
+        include: {
+          addons: true
+        }
       });
 
       const response: CartPostResponse = {
