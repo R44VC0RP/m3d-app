@@ -19,7 +19,7 @@ function findFile(fileId: string) {
   return files.find((f) => f.id === fileId)
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { fileId: string } }) {
+export async function GET(_req: NextRequest, { params }: any) {
   const file = findFile(params.fileId)
   if (!file) {
     const res: ResponseGET = { error: "File not found" }
@@ -29,7 +29,7 @@ export async function GET(_req: NextRequest, { params }: { params: { fileId: str
   return NextResponse.json(res)
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { fileId: string } }) {
+export async function DELETE(_req: NextRequest, { params }: any) {
   const index = files.findIndex((f) => f.id === params.fileId)
   if (index === -1) {
     const res: ResponseDELETE = { error: "File not found" }

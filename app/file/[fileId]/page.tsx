@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 
 const QUALITIES: Quality[] = ["Good", "Better", "Best"]
 
-export default function FilePreviewPage({ params }: { params: { fileId: string } }) {
+export default function FilePreviewPage({ params }: any) {
   const { fileId } = params
   const router = useRouter()
 
