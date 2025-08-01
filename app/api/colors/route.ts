@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db, colors } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import type { 
   ColorGetRequest, 
   ColorGetResponse, 
@@ -16,8 +17,8 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
 
     if (id) {
-      const color = await prisma.color.findUnique({
-        where: { id }
+      const color = await db.query.colors.findFirst({
+        where: eq(colors.id, id)
       });
 
       if (!color) {
@@ -35,14 +36,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const colors = await prisma.color.findMany({
-      where: { available: true },
-      orderBy: { name: 'asc' }
+    const allColors = await db.query.colors.findMany({
+      where: eq(colors.available, true),
+      orderBy: (colors, { asc }) => [asc(colors.name)]
     });
 
     const response: ColorGetResponse = {
       success: true,
-      data: colors
+      data: allColors
     };
     return NextResponse.json(response);
   } catch (error) {
@@ -59,13 +60,11 @@ export async function POST(request: NextRequest) {
   try {
     const body: ColorPostRequest = await request.json();
 
-    const color = await prisma.color.create({
-      data: {
-        name: body.name,
-        hexCode: body.hexCode,
-        available: body.available ?? true
-      }
-    });
+    const [color] = await db.insert(colors).values({
+      name: body.name,
+      hexCode: body.hexCode,
+      available: body.available ?? true
+    }).returning();
 
     const response: ColorPostResponse = {
       success: true,
@@ -95,9 +94,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    await prisma.color.delete({
-      where: { id }
-    });
+    await db.delete(colors).where(eq(colors.id, id));
 
     const response: ColorDeleteResponse = {
       success: true,

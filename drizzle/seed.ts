@@ -1,10 +1,15 @@
-import { PrismaClient } from '@prisma/client';
+import { db, colors, fileAddons, files } from '@/lib/db';
+import { eq } from 'drizzle-orm';
+import dotenv from 'dotenv';
 
-const prisma = new PrismaClient();
+// Load environment variables
+dotenv.config();
 
-async function main() {
+async function seed() {
+  console.log('🌱 Starting seed...');
+
   // Seed Colors
-  const colors = [
+  const colorData = [
     { name: 'White', hexCode: '#FFFFFF' },
     { name: 'Black', hexCode: '#000000' },
     { name: 'Red', hexCode: '#FF0000' },
@@ -18,21 +23,22 @@ async function main() {
     { name: 'Brown', hexCode: '#A52A2A' },
     { name: 'Gold', hexCode: '#FFD700' },
     { name: 'Silver', hexCode: '#C0C0C0' },
-    { name: 'Transparent', hexCode: '#FFFFFF' }
+    { name: 'Transparent', hexCode: '#FFFFFF00' }
   ];
 
-  for (const color of colors) {
-    await prisma.color.upsert({
-      where: { hexCode: color.hexCode },
-      update: {},
-      create: color
+  for (const color of colorData) {
+    const existing = await db.query.colors.findFirst({
+      where: eq(colors.hexCode, color.hexCode)
     });
+
+    if (!existing) {
+      await db.insert(colors).values(color);
+      console.log(`✅ Created color: ${color.name}`);
+    }
   }
 
-  console.log('✅ Colors seeded');
-
   // Seed File Addons
-  const addons = [
+  const addonData = [
     {
       name: 'Queue Priority',
       description: 'Jump to the top of the print queue',
@@ -53,18 +59,19 @@ async function main() {
     }
   ];
 
-  for (const addon of addons) {
-    await prisma.fileAddon.upsert({
-      where: { type: addon.type },
-      update: {},
-      create: addon
+  for (const addon of addonData) {
+    const existing = await db.query.fileAddons.findFirst({
+      where: eq(fileAddons.type, addon.type)
     });
+
+    if (!existing) {
+      await db.insert(fileAddons).values(addon);
+      console.log(`✅ Created addon: ${addon.name}`);
+    }
   }
 
-  console.log('✅ File addons seeded');
-
   // Seed Example Files
-  const files = [
+  const fileData = [
     {
       name: 'Phone Stand',
       filetype: 'STL',
@@ -73,7 +80,7 @@ async function main() {
       dimensionY: 60,
       dimensionZ: 100,
       mass: 45,
-      slicing_status: 'ready',
+      slicingStatus: 'ready',
       price: 15.00,
       images: [
         'https://images.unsplash.com/photo-1609205807490-b15b9677c6b8?w=800',
@@ -93,7 +100,7 @@ async function main() {
       dimensionY: 100,
       dimensionZ: 80,
       mass: 120,
-      slicing_status: 'ready',
+      slicingStatus: 'ready',
       price: 25.00,
       images: [
         'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800'
@@ -112,7 +119,7 @@ async function main() {
       dimensionY: 50,
       dimensionZ: 20,
       mass: 30,
-      slicing_status: 'processing',
+      slicingStatus: 'processing',
       price: 12.00,
       images: [
         'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800'
@@ -131,7 +138,7 @@ async function main() {
       dimensionY: 100,
       dimensionZ: 120,
       mass: 85,
-      slicing_status: 'ready',
+      slicingStatus: 'ready',
       price: 18.00,
       images: [
         'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=800'
@@ -150,7 +157,7 @@ async function main() {
       dimensionY: 20,
       dimensionZ: 15,
       mass: 10,
-      slicing_status: 'ready',
+      slicingStatus: 'ready',
       price: 8.00,
       images: [
         'https://images.unsplash.com/photo-1544731612-de7f96afe55f?w=800'
@@ -163,20 +170,19 @@ async function main() {
     }
   ];
 
-  for (const file of files) {
-    await prisma.file.create({
-      data: file
-    });
+  for (const file of fileData) {
+    await db.insert(files).values(file);
+    console.log(`✅ Created file: ${file.name}`);
   }
 
-  console.log('✅ Example files seeded');
+  console.log('✅ Seed completed!');
 }
 
-main()
+seed()
   .catch((e) => {
-    console.error(e);
+    console.error('❌ Seed failed:', e);
     process.exit(1);
   })
-  .finally(async () => {
-    await prisma.$disconnect();
+  .then(() => {
+    process.exit(0);
   });

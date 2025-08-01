@@ -14,7 +14,7 @@ export interface FileGetResponse {
     dimensionY: number;
     dimensionZ: number;
     mass: number;
-    slicing_status: string;
+    slicingStatus: string;
     metadata?: any;
     price: number;
     images: string[];
@@ -29,7 +29,7 @@ export interface FileGetResponse {
     dimensionY: number;
     dimensionZ: number;
     mass: number;
-    slicing_status: string;
+    slicingStatus: string;
     metadata?: any;
     price: number;
     images: string[];
@@ -64,7 +64,7 @@ export interface FilePostResponse {
     dimensionY: number;
     dimensionZ: number;
     mass: number;
-    slicing_status: string;
+    slicingStatus: string;
     metadata?: any;
     price: number;
     images: string[];
@@ -150,6 +150,7 @@ export interface CartGetResponse {
     sessionId: string;
     items: Array<{
       id: string;
+      cartId: string;
       fileId: string;
       file: {
         id: string;
@@ -160,10 +161,12 @@ export interface CartGetResponse {
         dimensionY: number;
         dimensionZ: number;
         mass: number;
-        slicing_status: string;
+        slicingStatus: string;
         metadata?: any;
         price: number;
         images: string[];
+        createdAt: Date;
+        updatedAt: Date;
       };
       quantity: number;
       quality: string;
@@ -173,17 +176,26 @@ export interface CartGetResponse {
         name: string;
         hexCode: string;
         available: boolean;
+        createdAt: Date;
+        updatedAt: Date;
       } | null;
       addons: Array<{
         id: string;
+        cartItemId: string;
+        addonId: string;
         addon: {
           id: string;
           name: string;
           description?: string | null;
           price: number;
           type: string;
+          createdAt: Date;
+          updatedAt: Date;
         };
+        createdAt: Date;
       }>;
+      createdAt: Date;
+      updatedAt: Date;
     }>;
     createdAt: Date;
     updatedAt: Date;
@@ -211,7 +223,9 @@ export interface CartPostResponse {
     colorId?: string | null;
     addons: Array<{
       id: string;
+      cartItemId: string;
       addonId: string;
+      createdAt: Date;
     }>;
     createdAt: Date;
     updatedAt: Date;
@@ -250,7 +264,9 @@ export interface CartPutResponse {
     colorId?: string | null;
     addons: Array<{
       id: string;
+      cartItemId: string;
       addonId: string;
+      createdAt: Date;
     }>;
     createdAt: Date;
     updatedAt: Date;

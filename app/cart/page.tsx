@@ -149,6 +149,7 @@ export default function CartPage() {
                       Dimensions: {item.file.dimensionX} × {item.file.dimensionY} × {item.file.dimensionZ} mm
                     </p>
                     <p className="text-gray-400 text-sm">Mass: {item.file.mass}g</p>
+                    <p className="text-gray-400 text-sm">Status: {item.file.slicingStatus}</p>
                   </div>
                   <button
                     onClick={() => removeFromCart(item.id)}

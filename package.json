@@ -6,16 +6,20 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:seed": "tsx drizzle/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.0",
+    "@neondatabase/serverless": "^1.0.1",
+    "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/react-slot": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.44.4",
     "lucide-react": "^0.503.0",
     "next": "15.3.1",
     "react": "^19.0.0",
@@ -29,9 +33,9 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prisma": "^5.7.0",
+    "drizzle-kit": "^0.31.4",
     "tailwindcss": "^4",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "tw-animate-css": "^1.2.8",
     "typescript": "^5"
   }

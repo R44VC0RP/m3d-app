@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db, files } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import type { 
   FileGetRequest, 
   FileGetResponse, 
@@ -16,8 +17,8 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
 
     if (id) {
-      const file = await prisma.file.findUnique({
-        where: { id }
+      const file = await db.query.files.findFirst({
+        where: eq(files.id, id)
       });
 
       if (!file) {
@@ -35,13 +36,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const files = await prisma.file.findMany({
-      orderBy: { createdAt: 'desc' }
+    const allFiles = await db.query.files.findMany({
+      orderBy: (files, { desc }) => [desc(files.createdAt)]
     });
 
     const response: FileGetResponse = {
       success: true,
-      data: files
+      data: allFiles
     };
     return NextResponse.json(response);
   } catch (error) {
@@ -58,21 +59,19 @@ export async function POST(request: NextRequest) {
   try {
     const body: FilePostRequest = await request.json();
 
-    const file = await prisma.file.create({
-      data: {
-        name: body.name,
-        filetype: body.filetype,
-        filename: body.filename,
-        dimensionX: body.dimensionX,
-        dimensionY: body.dimensionY,
-        dimensionZ: body.dimensionZ,
-        mass: body.mass,
-        slicing_status: body.slicing_status || 'pending',
-        metadata: body.metadata,
-        price: body.price || 0,
-        images: body.images || []
-      }
-    });
+    const [file] = await db.insert(files).values({
+      name: body.name,
+      filetype: body.filetype,
+      filename: body.filename,
+      dimensionX: body.dimensionX,
+      dimensionY: body.dimensionY,
+      dimensionZ: body.dimensionZ,
+      mass: body.mass,
+      slicingStatus: body.slicing_status || 'pending',
+      metadata: body.metadata,
+      price: body.price || 0,
+      images: body.images || []
+    }).returning();
 
     const response: FilePostResponse = {
       success: true,
@@ -102,9 +101,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    await prisma.file.delete({
-      where: { id }
-    });
+    await db.delete(files).where(eq(files.id, id));
 
     const response: FileDeleteResponse = {
       success: true,

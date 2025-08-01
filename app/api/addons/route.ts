@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db, fileAddons } from '@/lib/db';
+import { eq } from 'drizzle-orm';
 import type { 
   AddonGetRequest, 
   AddonGetResponse, 
@@ -16,8 +17,8 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id');
 
     if (id) {
-      const addon = await prisma.fileAddon.findUnique({
-        where: { id }
+      const addon = await db.query.fileAddons.findFirst({
+        where: eq(fileAddons.id, id)
       });
 
       if (!addon) {
@@ -35,8 +36,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response);
     }
 
-    const addons = await prisma.fileAddon.findMany({
-      orderBy: { name: 'asc' }
+    const addons = await db.query.fileAddons.findMany({
+      orderBy: (fileAddons, { asc }) => [asc(fileAddons.name)]
     });
 
     const response: AddonGetResponse = {
@@ -58,14 +59,12 @@ export async function POST(request: NextRequest) {
   try {
     const body: AddonPostRequest = await request.json();
 
-    const addon = await prisma.fileAddon.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        price: body.price || 0,
-        type: body.type
-      }
-    });
+    const [addon] = await db.insert(fileAddons).values({
+      name: body.name,
+      description: body.description,
+      price: body.price || 0,
+      type: body.type
+    }).returning();
 
     const response: AddonPostResponse = {
       success: true,
@@ -95,9 +94,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    await prisma.fileAddon.delete({
-      where: { id }
-    });
+    await db.delete(fileAddons).where(eq(fileAddons.id, id));
 
     const response: AddonDeleteResponse = {
       success: true,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db, carts, cartItems, cartItemAddons, files, colors, fileAddons } from '@/lib/db';
+import { eq, and, isNull } from 'drizzle-orm';
 import type { 
   CartGetRequest, 
   CartGetResponse, 
@@ -25,15 +26,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(response, { status: 400 });
     }
 
-    const cart = await prisma.cart.findUnique({
-      where: { sessionId },
-      include: {
+    const cart = await db.query.carts.findFirst({
+      where: eq(carts.sessionId, sessionId),
+      with: {
         items: {
-          include: {
+          with: {
             file: true,
             color: true,
             addons: {
-              include: {
+              with: {
                 addon: true
               }
             }
@@ -99,77 +100,71 @@ export async function POST(request: NextRequest) {
     }
 
     // Create cart if it doesn't exist
-    let cart = await prisma.cart.findUnique({
-      where: { sessionId: body.sessionId }
+    let cart = await db.query.carts.findFirst({
+      where: eq(carts.sessionId, body.sessionId)
     });
 
     if (!cart) {
-      cart = await prisma.cart.create({
-        data: { sessionId: body.sessionId }
-      });
+      const [newCart] = await db.insert(carts).values({
+        sessionId: body.sessionId
+      }).returning();
+      cart = newCart;
     }
 
     // Check if item already exists in cart
-    const existingItem = body.colorId 
-      ? await prisma.cartItem.findFirst({
-          where: {
-            cartId: cart.id,
-            fileId: body.fileId,
-            quality: quality,
-            colorId: body.colorId
-          }
-        })
-      : await prisma.cartItem.findFirst({
-          where: {
-            cartId: cart.id,
-            fileId: body.fileId,
-            quality: quality,
-            colorId: null
-          }
-        });
+    const existingItem = await db.query.cartItems.findFirst({
+      where: and(
+        eq(cartItems.cartId, cart.id),
+        eq(cartItems.fileId, body.fileId),
+        eq(cartItems.quality, quality),
+        body.colorId ? eq(cartItems.colorId, body.colorId) : isNull(cartItems.colorId)
+      )
+    });
 
     if (existingItem) {
       // Update quantity if item exists
-      const updatedItem = await prisma.cartItem.update({
-        where: { id: existingItem.id },
-        data: { quantity: existingItem.quantity + quantity },
-        include: {
+      const [updatedItem] = await db.update(cartItems)
+        .set({ quantity: existingItem.quantity + quantity })
+        .where(eq(cartItems.id, existingItem.id))
+        .returning();
+
+      const updatedItemWithRelations = await db.query.cartItems.findFirst({
+        where: eq(cartItems.id, updatedItem.id),
+        with: {
           addons: true
         }
       });
 
       const response: CartPostResponse = {
         success: true,
-        data: updatedItem
+        data: updatedItemWithRelations!
       };
       return NextResponse.json(response);
     }
 
     // Create new cart item
-    const cartItem = await prisma.cartItem.create({
-      data: {
-        cartId: cart.id,
-        fileId: body.fileId,
-        quantity: quantity,
-        quality: quality,
-        colorId: body.colorId
-      }
-    });
+    const [cartItem] = await db.insert(cartItems).values({
+      cartId: cart.id,
+      fileId: body.fileId,
+      quantity: quantity,
+      quality: quality,
+      colorId: body.colorId || null
+    }).returning();
 
     // Add addons if provided
     if (body.addonIds && body.addonIds.length > 0) {
-      await prisma.cartItemAddon.createMany({
-        data: body.addonIds.map(addonId => ({
+      await db.insert(cartItemAddons).values(
+        body.addonIds.map(addonId => ({
           cartItemId: cartItem.id,
           addonId: addonId
         }))
-      });
+      );
     }
 
     // Fetch the created item with addons
-    const createdItem = await prisma.cartItem.findUnique({
-      where: { id: cartItem.id },
-      include: {
+    const createdItem = await db.query.cartItems.findFirst({
+      where: eq(cartItems.id, cartItem.id),
+      with: {
         addons: true
       }
     });
@@ -225,33 +220,31 @@ export async function PUT(request: NextRequest) {
     if (body.quality !== undefined) updateData.quality = body.quality;
     if (body.colorId !== undefined) updateData.colorId = body.colorId;
 
-    const updatedItem = await prisma.cartItem.update({
-      where: { id: body.itemId },
-      data: updateData
-    });
+    await db.update(cartItems)
+      .set(updateData)
+      .where(eq(cartItems.id, body.itemId));
 
     // Update addons if provided
     if (body.addonIds !== undefined) {
       // Remove existing addons
-      await prisma.cartItemAddon.deleteMany({
-        where: { cartItemId: body.itemId }
-      });
+      await db.delete(cartItemAddons)
+        .where(eq(cartItemAddons.cartItemId, body.itemId));
 
       // Add new addons
       if (body.addonIds.length > 0) {
-        await prisma.cartItemAddon.createMany({
-          data: body.addonIds.map(addonId => ({
+        await db.insert(cartItemAddons).values(
+          body.addonIds.map(addonId => ({
             cartItemId: body.itemId,
             addonId: addonId
           }))
-        });
+        );
       }
     }
 
     // Fetch updated item with addons
-    const item = await prisma.cartItem.findUnique({
-      where: { id: body.itemId },
-      include: {
+    const item = await db.query.cartItems.findFirst({
+      where: eq(cartItems.id, body.itemId),
+      with: {
         addons: true
       }
     });
@@ -287,9 +280,7 @@ export async function DELETE(request: NextRequest) {
 
     if (itemId) {
       // Delete specific item
-      await prisma.cartItem.delete({
-        where: { id: itemId }
-      });
+      await db.delete(cartItems).where(eq(cartItems.id, itemId));
 
       const response: CartDeleteResponse = {
         success: true,
@@ -298,14 +289,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(response);
     } else {
       // Clear entire cart
-      const cart = await prisma.cart.findUnique({
-        where: { sessionId }
+      const cart = await db.query.carts.findFirst({
+        where: eq(carts.sessionId, sessionId)
       });
 
       if (cart) {
-        await prisma.cartItem.deleteMany({
-          where: { cartId: cart.id }
-        });
+        await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
       }
 
       const response: CartDeleteResponse = {

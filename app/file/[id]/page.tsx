@@ -212,7 +212,7 @@ export default function FilePage() {
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-400">Slicing Status:</dt>
-                  <dd className="font-medium capitalize">{file.slicing_status}</dd>
+                  <dd className="font-medium capitalize">{file.slicingStatus}</dd>
                 </div>
               </dl>
             </div>
