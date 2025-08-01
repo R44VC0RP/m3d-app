@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { addToCart, clearCart, getCart, removeCartItem } from "@/lib/db"
+import { getCartWithItems, addItemToCart, removeItemFromCart, clearCartItems } from "@/lib/repository"
 import { Cart } from "@/lib/types"
 
 // ----------------------------- Types --------------------------------------------
@@ -23,7 +23,7 @@ export type ResponseDELETE = Cart
 // ---------------------------------------------------------------------------------
 
 export async function GET() {
-  const cart = getCart()
+  const cart = await getCartWithItems()
   const res: ResponseGET = cart
   return NextResponse.json(res)
 }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   if (quantity < 1 || quantity > 100) {
     return NextResponse.json({ error: "Quantity must be between 1 and 100" }, { status: 400 })
   }
-  const cart = addToCart({ fileId, quality, quantity, colorId, addonIds })
+  const cart = await addItemToCart({ fileId, quality, quantity, colorId, addonIds })
   const res: ResponsePOST = cart
   return NextResponse.json(res, { status: 201 })
 }
@@ -51,14 +51,12 @@ export async function DELETE(req: NextRequest) {
   let body: RequestDELETE = {}
   try {
     body = await req.json()
-  } catch {
-    // ignore empty body
-  }
+  } catch {}
   let cart: Cart
   if (body?.itemId) {
-    cart = removeCartItem(body.itemId)
+    cart = await removeItemFromCart(body.itemId)
   } else {
-    cart = clearCart()
+    cart = await clearCartItems()
   }
   const res: ResponseDELETE = cart
   return NextResponse.json(res)

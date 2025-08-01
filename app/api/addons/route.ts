@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server"
-import { addons } from "@/lib/db"
+import { listAddons } from "@/lib/repository"
 import { Addon } from "@/lib/types"
 
 export type RequestGET = {}
 export type ResponseGET = Addon[]
 
 export async function GET() {
-  const res: ResponseGET = addons
+  const res: ResponseGET = await listAddons()
   return NextResponse.json(res)
 }

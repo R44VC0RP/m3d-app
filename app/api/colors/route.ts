@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { colors } from "@/lib/db"
+import { listColors } from "@/lib/repository"
 import { Color } from "@/lib/types"
 
 // ----------------------------- Types --------------------------------------------
@@ -9,6 +9,6 @@ export type ResponseGET = Color[]
 // ---------------------------------------------------------------------------------
 
 export async function GET() {
-  const res: ResponseGET = colors
+  const res: ResponseGET = await listColors()
   return NextResponse.json(res)
 }

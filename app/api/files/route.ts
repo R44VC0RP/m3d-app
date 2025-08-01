@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createFile, files } from "@/lib/db"
+import { createFileRecord, getAllFiles } from "@/lib/repository"
 import { File3D } from "@/lib/types"
 
 // ----------------------------- Types --------------------------------------------
@@ -18,8 +18,8 @@ export interface RequestPOST {
 export interface ResponsePOST extends File3D {}
 // ---------------------------------------------------------------------------------
 
-export async function GET(_req: NextRequest) {
-  const response: ResponseGET = files
+export async function GET() {
+  const response: ResponseGET = await getAllFiles()
   return NextResponse.json(response)
 }
 
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
   }
 
-  const newFile = createFile({
+  const newFile = await createFileRecord({
     name: body.name,
     filetype: body.filetype,
     filename: body.filename,
