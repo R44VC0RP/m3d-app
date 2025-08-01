@@ -1,3 +1,5 @@
+'use client';
+
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { FeaturedProducts } from "@/components/featured-products";
@@ -8,6 +10,10 @@ import { OtherProducts } from "@/components/other-products";
 import ScrollButton from "@/components/ScrollButton";
 import { CustomerShowcase } from "@/components/customer-showcase";
 import VendorShowcase from "@/components/vendor-showcase";
+import FileGrid from "@/components/FileGrid";
+import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "@/lib/cart-context";
 
 function getFeaturedProducts() {
   return [
@@ -93,7 +99,7 @@ function getOtherProducts() {
   ];
 }
 
-function getCustomerShowcase() {
+function getCustomerData() {
   return [
     {
       id: "1",
@@ -155,26 +161,50 @@ function getCustomerShowcase() {
   ];
 }
 
-export default async function Home() {
-  const featuredProducts = await getFeaturedProducts();
-  const otherProducts = await getOtherProducts();
-  const testimonials = await getTestimonials();
-  const customerShowcase = await getCustomerShowcase();
+export default function Home() {
+  const { cart } = useCart();
+  const itemCount = cart?.items?.reduce((total, item) => total + item.quantity, 0) || 0;
+
   return (
-    <main className="[&::-webkit-scrollbar]:hidden">
-      <div className="absolute inset-0 -z-10">
-        <BackgroundMask />
-      </div>
-      <div className="max-w-5xl mx-auto">
+    <main className="bg-black text-white">
+      {/* Cart Button - Fixed Position */}
+      <Link
+        href="/cart"
+        className="fixed top-6 right-6 z-50 bg-orange-500 text-white p-3 rounded-full hover:bg-orange-600 transition-colors shadow-lg"
+      >
+        <div className="relative">
+          <ShoppingCart className="h-6 w-6" />
+          {itemCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-white text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+              {itemCount}
+            </span>
+          )}
+        </div>
+      </Link>
+
+      <div className="relative">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] bg-[#FF4500] rounded-full blur-[150px] opacity-20"></div>
         <Header />
         <Hero />
-        <FeaturedProducts products={featuredProducts} />
-        <OtherProducts items={otherProducts} />
-        <CustomerShowcase items={customerShowcase} />
-        <VendorShowcase />
-        <FileUpload currentStep={0} />
-        <TrustedPeople testimonials={testimonials} />
       </div>
+      <div className="relative">
+        <div className="absolute top-1/2 left-0 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-[#FF4500] rounded-full blur-[200px] opacity-10"></div>
+        <BackgroundMask>
+          <div id="products" className="container mx-auto px-4 py-16">
+            <h2 className="text-4xl font-bold text-center mb-12">Available Files</h2>
+            <FileGrid />
+          </div>
+        </BackgroundMask>
+      </div>
+      <FeaturedProducts products={getFeaturedProducts()} />
+      <TrustedPeople testimonials={getTestimonials()} />
+      <div className="relative">
+        <div className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-[#FF4500] rounded-full blur-[200px] opacity-10"></div>
+        <FileUpload />
+      </div>
+      <OtherProducts products={getOtherProducts()} />
+      <CustomerShowcase customers={getCustomerData()} />
+      <VendorShowcase />
       <ScrollButton />
     </main>
   );

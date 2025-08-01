@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { overusedGrotesk } from "./fonts";
 import "./globals.css";
+import { CartProvider } from "@/lib/cart-context";
 
 export const metadata: Metadata = {
   title: "Mandarin 3D",
@@ -18,7 +19,9 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Mandarin 3D" />
       </head>
       <body className={`${overusedGrotesk.variable} antialiased`}>
-        {children}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
