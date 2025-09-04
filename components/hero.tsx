@@ -1,29 +1,50 @@
 import { Button } from "@/components/ui/button"
 import { Logo } from "./logo"
+import Image from "next/image"
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden py-24">
       <div className="container relative">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center text-center">
-          <Logo className="w-[48px] h-auto text-foreground mb-8" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Left side - Text content */}
+          <div className="flex flex-col space-y-8">
 
-          {/* Heading */}
-          <h1 className="font-heading text-4xl mb-6 font-medium">
-            Ready to bring
-            <br />
-            your ideas to life?
-          </h1>
+            {/* Heading */}
+            <h1 className="font-heading text-4xl lg:text-5xl font-bold leading-tight tracking-[-0.04em]">
+              Ready to bring
+              <br />
+              your ideas to life?
+            </h1>
 
-          {/* Description */}
-          <p className="max-w-[30rem] leading-normal text-muted-foreground mb-8">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s.
-          </p>
+            {/* Description */}
+            <p className="text-lg leading-relaxed text-muted-foreground max-w-lg">
+              Ready to bring your ideas to life? We&apos;re here to help you create the perfect 3D printed product.
+            </p>
 
-          {/* CTA Button */}
-          <Button variant="primary-accent" size="medium">
-            Get started
-          </Button>
+            {/* CTA Button */}
+            <div className="flex gap-2">
+              <Button variant="primary-accent" size="medium">
+                Get an Instant Quote
+              </Button>
+              <Button variant="primary" size="medium">
+                Contact Sales
+              </Button>
+            </div>
+          </div>
+
+          {/* Right side - Image */}
+          <div className="relative">
+            <div className="relative aspect-square max-w-lg mx-auto lg:mx-0">
+              <Image
+                src="/h2s-image.png"
+                alt="3D Printer - H2S Model"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -168,11 +168,11 @@ export default async function Home() {
       <div className="max-w-5xl mx-auto">
         <Header />
         <Hero />
+        <VendorShowcase />
         <FeaturedProducts products={featuredProducts} />
+        <FileUpload currentStep={0} />
         <OtherProducts items={otherProducts} />
         <CustomerShowcase items={customerShowcase} />
-        <VendorShowcase />
-        <FileUpload currentStep={0} />
         <TrustedPeople testimonials={testimonials} />
       </div>
       <ScrollButton />

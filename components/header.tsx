@@ -4,6 +4,8 @@ import { Wordmark } from "@/components/wordmark"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
+import { SignedIn, SignedOut } from "@clerk/nextjs"
+import { FaShoppingCart } from "react-icons/fa"
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -39,9 +41,24 @@ export function Header() {
               <Button variant="link" size="medium">
                 Library
               </Button>
-              <Button variant="primary" size="medium">
+              <SignedIn>
+                <Button variant="link" size="medium">
+                  Dashboard
+                </Button>
+              </SignedIn>
+              <SignedOut>
+                <Button variant="primary" size="medium">
+                  Login
+                </Button>
+              </SignedOut>
+              <div className="flex items-center space-x-2">
+              <Button variant="primary-accent" size="medium">
                 Print Now
               </Button>
+              <Button variant="primary" size="medium">
+                <FaShoppingCart className="size-3" />
+              </Button>
+              </div>
             </nav>
           </div>
         </div>

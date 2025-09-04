@@ -1,0 +1,90 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Mandarin3D 3D File Slicing Service
+
+A Flask-based microservice for processing various 3D file formats and extracting mass/dimension information using SuperSlicer with automatic file format conversion.
+
+## Supported 3D File Formats
+
+**Native:** STL (processed directly)
+
+**Auto-converted to STL:** OBJ, PLY, OFF, 3MF, GLTF, GLB, DAE, X3D, WRL, VRML, STEP, STP, IGES, IGS, COLLADA, BLEND
+
+*Conversion engines: trimesh (primary), pymeshlab (fallback)*
+
+Baseurl: https://m3d-api.sevalla.app
+
+## API Endpoints
+
+### POST `/api/slice`
+
+Process any supported 3D file format and return results via callback URL.
+
+#### Option 1: JSON Request (File URL)
+```json
+{
+  "file_url": "https://example.com/model.obj",
+  "callback_url": "https://your-api.com/callback",
+  "file_id": "optional_file_identifier",
+  "max_dimensions": {"x": 300, "y": 300, "z": 300}
+}
+```
+
+#### Option 2: Form Data (File Upload)
+- `model_file`: 3D model file in any supported format (required)
+- `callback_url`: Callback URL (required)  
+- `file_id`: Optional file identifier
+- `max_x`, `max_y`, `max_z`: Optional dimension limits (default: 300mm)
+
+*Note: Also accepts `stl_file`, `3d_file`, or `file` field names for backward compatibility.*
+
+#### Response
+```json
+{
+  "message": "3D file processing started",
+  "file_id": "your_file_id",
+  "status": "processing",
+  "original_format": "OBJ"
+}
+```
+
+#### Callback Payload
+On success:
+```json
+{
+  "file_id": "your_file_id",
+  "status": "success",
+  "mass_grams": 15.5,
+  "dimensions": {"x": 50.2, "y": 75.1, "z": 25.0},
+  "processing_time": 2.45,
+  "slicer_time": 1.8,
+  "timestamp": 1704067200.0
+}
+```
+
+On error (conversion failure):
+```json
+{
+  "file_id": "your_file_id",
+  "status": "error", 
+  "error": "Failed to convert file to STL format",
+  "processing_time": 1.2,
+  "timestamp": 1704067200.0
+}
+```
+
+On error (dimension check):
+```json
+{
+  "file_id": "your_file_id", 
+  "status": "error",
+  "error": "Dimension X too large. Model dimensions: 350.00x200.00x100.00mm. Max allowed: 300x300x300mm.",
+  "dimensions": {"x": 350.0, "y": 200.0, "z": 100.0},
+  "processing_time": 1.2,
+  "timestamp": 1704067200.0
+}
+```

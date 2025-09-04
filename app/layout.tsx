@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { overusedGrotesk } from "./fonts";
 import "./globals.css";
+import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ConvAIWidget } from "@/components/ConvAIWidget";
 
 export const metadata: Metadata = {
   title: "Mandarin 3D",
@@ -18,7 +21,12 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Mandarin 3D" />
       </head>
       <body className={`${overusedGrotesk.variable} antialiased`}>
-        {children}
+        <ClerkProvider>
+          <ConvexClientProvider>
+            {children}
+            <ConvAIWidget />
+          </ConvexClientProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
