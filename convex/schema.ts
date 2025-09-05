@@ -219,4 +219,54 @@ export default defineSchema({
     text: v.string(),
     isCompleted: v.boolean(),
   }),
+
+  // Cart functionality tables
+  cartFiles: defineTable({
+    // File identification
+    filename: v.string(),
+    title: v.optional(v.string()),
+    uploadthingFileKey: v.string(),
+    uploadthingFileUrl: v.string(),
+    
+    // Processing status
+    status: v.union(
+      v.literal("uploading"),
+      v.literal("processing"),
+      v.literal("ready"),
+      v.literal("error")
+    ),
+    errorMessage: v.optional(v.string()),
+    
+    // Slicing results
+    massGrams: v.optional(v.number()),
+    dimensions: v.optional(v.object({
+      x: v.number(),
+      y: v.number(),
+      z: v.number(),
+    })),
+    
+    // Pricing
+    priceOverride: v.optional(v.number()),
+    calculatedPrice: v.optional(v.number()),
+    
+    // Cart association
+    sessionId: v.string(), // For anonymous users
+    userId: v.optional(v.id("users")), // For logged-in users
+    
+    // Metadata
+    processingTime: v.optional(v.number()),
+    slicerTime: v.optional(v.number()),
+  })
+    .index("by_session", ["sessionId"])
+    .index("by_user", ["userId"])
+    .index("by_uploadthing_key", ["uploadthingFileKey"]),
+  
+  // Session management for anonymous carts
+  cartSessions: defineTable({
+    sessionId: v.string(),
+    userId: v.optional(v.id("users")), // Links to user when they log in
+    expiresAt: v.number(),
+  })
+    .index("by_session_id", ["sessionId"])
+    .index("by_user", ["userId"]),
 });

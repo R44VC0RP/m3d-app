@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { CallbackPayload, Mandarin3DApiClient } from '@/lib/mandarin3d-api';
+import { api } from '@/convex/_generated/api';
+import { ConvexHttpClient } from 'convex/browser';
+
+// Initialize Convex HTTP client
+const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,10 +26,17 @@ export async function POST(request: NextRequest) {
         slicer_time: payload.slicer_time,
       });
       
-      // TODO: Handle successful processing
-      // - Store results in database
-      // - Update file status
-      // - Notify user
+      // Update file in Convex with processing results
+      await convex.mutation(api.cart.updateFileProcessingResults, {
+        uploadthingFileKey: payload.file_id, // file_id is the UploadThing key
+        status: 'ready',
+        massGrams: payload.mass_grams,
+        dimensions: payload.dimensions,
+        processingTime: payload.processing_time,
+        slicerTime: payload.slicer_time,
+      });
+      
+      console.log('✅ Updated Convex with processing results');
       
     } else if (Mandarin3DApiClient.isErrorCallback(payload)) {
       console.log('❌ Error callback:', {
@@ -34,10 +46,16 @@ export async function POST(request: NextRequest) {
         processing_time: payload.processing_time,
       });
       
-      // TODO: Handle processing error
-      // - Update file status to error
-      // - Store error message
-      // - Notify user of failure
+      // Update file in Convex with error status
+      await convex.mutation(api.cart.updateFileProcessingResults, {
+        uploadthingFileKey: payload.file_id, // file_id is the UploadThing key
+        status: 'error',
+        errorMessage: payload.error,
+        dimensions: payload.dimensions,
+        processingTime: payload.processing_time,
+      });
+      
+      console.log('❌ Updated Convex with error status');
     }
 
     // Return success response

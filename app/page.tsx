@@ -171,7 +171,7 @@ export default async function Home() {
         <VendorShowcase />
         <FeaturedProducts products={featuredProducts} />
         <FileUpload currentStep={0} />
-        <OtherProducts items={otherProducts} />
+        {/* <OtherProducts items={otherProducts} /> */}
         <CustomerShowcase items={customerShowcase} />
         <TrustedPeople testimonials={testimonials} />
       </div>

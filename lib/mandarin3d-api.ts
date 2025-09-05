@@ -4,6 +4,7 @@ export interface SliceRequest {
   file_url?: string;
   callback_url: string;
   file_id?: string;
+  file_name?: string; // Optional filename for URLs that don't contain filenames
   max_dimensions?: {
     x: number;
     y: number;
@@ -59,7 +60,8 @@ export type CallbackPayload = SuccessCallback | ErrorCallback;
 export class Mandarin3DApiClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = 'https://m3d-api.sevalla.app') {
+  constructor(baseUrl: string = process.env.MANDARIN3D_API_URL || 'https://m3d-api.sevalla.app') {
+    console.log('Mandarin3D API URL:', baseUrl);
     this.baseUrl = baseUrl;
   }
 
@@ -67,16 +69,46 @@ export class Mandarin3DApiClient {
    * Submit a 3D file for slicing via URL
    */
   async sliceFromUrl(request: SliceRequest): Promise<SliceResponse> {
-    const response = await fetch(`${this.baseUrl}/api/slice`, {
+    // For local development with self-signed certificates
+    const fetchOptions: RequestInit = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(request),
-    });
+    };
+
+    // If using Node.js 18+ and connecting to a local/dev server with self-signed cert
+    if (this.baseUrl.includes('.local') || this.baseUrl.includes('localhost')) {
+      // Note: In production, you should properly handle certificates
+      if (typeof process !== 'undefined' && process.env.NODE_TLS_REJECT_UNAUTHORIZED !== undefined) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      }
+    }
+
+    const response = await fetch(`${this.baseUrl}/api/slice`, fetchOptions);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      let errorMessage = `HTTP error! status: ${response.status}`;
+      let errorDetails;
+      
+      try {
+        errorDetails = await response.json();
+        errorMessage = errorDetails.error || errorDetails.message || errorMessage;
+      } catch (e) {
+        // If response body is not JSON, try to get text
+        try {
+          const text = await response.text();
+          if (text) errorMessage = `${errorMessage} - ${text}`;
+        } catch (e2) {
+          // Ignore if we can't read the body
+        }
+      }
+      
+      const error = new Error(errorMessage);
+      (error as any).status = response.status;
+      (error as any).response = errorDetails;
+      throw error;
     }
 
     return response.json();

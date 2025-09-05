@@ -30,6 +30,7 @@ Process any supported 3D file format and return results via callback URL.
   "file_url": "https://example.com/model.obj",
   "callback_url": "https://your-api.com/callback",
   "file_id": "optional_file_identifier",
+  "file_name": "model.stl",  // Optional: Required if URL doesn't contain filename
   "max_dimensions": {"x": 300, "y": 300, "z": 300}
 }
 ```
