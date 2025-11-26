@@ -2,7 +2,7 @@ import type React from "react"
 import { cn } from "@/lib/utils"
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "link" | "primary-accent"
+  variant?: "primary" | "secondary" | "destructive" | "link"
   size?: "medium" | "large"
   textAlign?: "center" | "left"
   children: React.ReactNode
@@ -24,70 +24,83 @@ export function Button({
     <button
       disabled={disabled}
       className={cn(
-        // Base styles
-        "inline-flex items-center relative rounded-[0.5rem] cursor-pointer select-none",
-        "transition-all duration-200 ease-in-out",
-        "focus-visible:outline-[1px] focus-visible:outline-red-500 focus-visible:outline-offset-[0.0625rem]",
+        // Base styles with squircle corners
+        // Layout: 6px horizontal padding, 4px gap between elements
+        "inline-flex items-center gap-[4px] relative rounded-[12px] corner-squircle cursor-pointer select-none",
+        "transition-all duration-150 ease-in-out",
+        "focus-visible:outline-2 focus-visible:outline-[#466F80] focus-visible:outline-offset-1",
         "tap-highlight-transparent",
-        "all-unset box-border",
+        "box-border",
 
-        // Primary variant
+        // Primary variant (Teal #466F80)
         variant === "primary" && [
-          "text-white bg-[#303030]",
-          "enabled:hover:bg-[#1a1a1a] enabled:active:bg-[#1a1a1a]",
-          "enabled:shadow-[0_-0.0625rem_0_0.0625rem_rgba(0,0,0,0.8)_inset,0_0_0_0.0625rem_rgba(48,48,48,1)_inset,0_0.03125rem_0_0.09375rem_rgba(255,255,255,0.25)_inset]",
-          "enabled:active:shadow-[0_0.1875rem_0_0_rgb(0,0,0)_inset]",
-          "enabled:bg-gradient-to-b enabled:from-[rgba(48,48,48,0)_63.53%] enabled:to-[rgba(255,255,255,0.15)_100%]",
-          "disabled:bg-[rgba(0,0,0,0.17)] disabled:text-white/90 disabled:shadow-none",
-        ],
-
-        // Primary Accent variant
-        variant === "primary-accent" && [
           "text-white bg-[#466F80]",
-          "enabled:hover:bg-[#334E58] enabled:active:bg-[#334E58]",
-          "enabled:shadow-[0_-0.0625rem_0_0.0625rem_rgba(0,0,0,0.8)_inset,0_0_0_0.0625rem_rgba(70,111,128,1)_inset,0_0.03125rem_0_0.09375rem_rgba(255,255,255,0.25)_inset]",
-          "enabled:active:shadow-[0_0.1875rem_0_0_rgb(51,78,88)_inset]",
-          "enabled:bg-gradient-to-b enabled:from-[rgba(70,111,128,0)_63.53%] enabled:to-[rgba(255,255,255,0.15)_100%]",
-          "disabled:bg-[rgba(70,111,128,0.17)] disabled:text-white/90 disabled:shadow-none",
+          // Combined shadow: inset top shadow + outer shadow
+          "shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.04),0_4px_4px_0_rgba(0,0,0,0.02)]",
+          "enabled:hover:bg-[#3a5d6b]",
+          "enabled:active:bg-[#2e4b57]",
+          "disabled:bg-[#466F80]/40 disabled:text-white/70 disabled:shadow-none",
         ],
 
-        // Secondary variant
+        // Secondary variant (White with border)
         variant === "secondary" && [
-          "text-[#303030] bg-[#e3e3e3]",
-          "enabled:hover:bg-[#fafafa] enabled:active:bg-[#f7f7f7]",
-          "enabled:shadow-none",
-          "disabled:bg-[rgba(0,0,0,0.05)] disabled:text-[#b5b5b5]",
+          "text-[#444444] bg-white",
+          "border border-[#d1d1d1]",
+          // Combined shadow: inset top shadow + outer shadow
+          "shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.04),0_4px_4px_0_rgba(0,0,0,0.02)]",
+          "enabled:hover:bg-[#f9f9f9] enabled:hover:border-[#b8b8b8]",
+          "enabled:active:bg-[#f0f0f0]",
+          "disabled:bg-[#f5f5f5] disabled:text-[#999999] disabled:border-[#e0e0e0] disabled:shadow-none",
+        ],
+
+        // Destructive variant (Red/Danger)
+        variant === "destructive" && [
+          "text-white bg-[#E40000]",
+          "border-[1.4px] border-transparent",
+          // Default shadow
+          "shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.06),0_4px_4px_0_rgba(0,0,0,0.04)]",
+          // Hover: #C30000 background with adjusted shadow
+          "enabled:hover:bg-[#C30000]",
+          "enabled:hover:shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.06),0_4px_4px_0_rgba(0,0,0,0.06)]",
+          // Pressed: #E40000 background with #940000 border
+          "enabled:active:bg-[#E40000]",
+          "enabled:active:border-[#940000]",
+          "enabled:active:shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.06),0_4px_4px_0_rgba(0,0,0,0.02)]",
+          // Disabled: #F17F7F background
+          "disabled:bg-[#F17F7F] disabled:text-white disabled:shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.06),0_4px_4px_0_rgba(0,0,0,0.04)]",
         ],
 
         // Link variant
         variant === "link" && [
           "bg-transparent",
-          "text-[#303030] hover:text-[#1a1a1a]",
+          "text-[#444444] hover:text-[#222222]",
           "shadow-none",
           "p-0 min-h-0 min-w-0",
-          "disabled:bg-transparent disabled:text-[#b5b5b5]",
+          "disabled:bg-transparent disabled:text-[#999999]",
           "rounded-none",
           "hover:underline",
         ],
 
-        // Size styles - only apply to primary and secondary variants
+        // Size styles - only apply to non-link variants
         variant !== "link" && size === "medium" && [
-          "min-h-8 min-w-8 px-4 py-3",
-          "md:min-h-7 md:min-w-7 md:px-3 md:py-1.5",
+          "h-[32px] px-3 py-1.5",
+        ],
+        variant !== "link" && size === "large" && [
+          "h-[40px] px-4 py-2",
         ],
 
         // Text alignment
         textAlign === "center" && "justify-center text-center",
+        textAlign === "left" && "justify-start text-left",
 
         // Font styles
-        "text-sm font-semibold",
-        "md:text-xs",
+        "text-[15px] font-medium tracking-[-0.01em] leading-normal",
 
         // Disabled state
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:select-none",
 
-        // Pressable animation - only apply to primary and secondary variants
-        variant !== "link" && pressable && "enabled:active:not-disabled:[&>*]:md:translate-y-[0.0625rem]",
+        // Pressable animation
+        variant !== "link" && pressable && "enabled:active:scale-[0.98]",
 
         className,
       )}

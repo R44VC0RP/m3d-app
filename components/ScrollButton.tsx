@@ -36,7 +36,7 @@ export default function ScrollButton() {
       type="button"
       onClick={handleClick}
       aria-label={atBottom ? "Scroll to top" : "Scroll down"}
-      className="fixed bottom-4 right-4 z-50 rounded-full bg-black/60 p-2 text-white backdrop-blur-sm hover:bg-black/80 cursor-pointer hover:scale-105 transition-all duration-200"
+      className="fixed bottom-4 left-4 z-50 rounded-full bg-black/60 p-2 text-white backdrop-blur-sm hover:bg-black/80 cursor-pointer hover:scale-105 transition-all duration-200"
     >
       {atBottom ? <ArrowUp /> : <ArrowDown />}
     </button>

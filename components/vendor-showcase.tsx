@@ -3,10 +3,10 @@ export default function VendorShowcase() {
     <section className="w-full py-16">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-2">
-            <p className="text-muted-foreground">Vendor Showcase</p>
+          <div className="flex flex-col gap-2 text-center">
+            <p className="text-muted-foreground">Trusted By</p>
             <h2 className="text-2xl font-medium tracking-tight text-foreground">
-              Our Vendor Showcase
+              Our A+ Vendors
             </h2>
           </div>
           <div className="grid grid-cols-2 grid-rows-2 gap-8 md:grid-cols-4">

@@ -1,0 +1,240 @@
+---
+description: Complete guide for integrating and using the Mandarin3D API slicing service with webhook callbacks
+---
+
+# Mandarin3D API Integration Guide
+
+This guide covers how to use the Mandarin3D API slicing service integration built for the M3D app.
+
+## Files Overview
+
+The integration consists of three main files:
+
+- **[lib/mandarin3d-api.ts](mdc:lib/mandarin3d-api.ts)** - Main client library with TypeScript types and API methods
+- **[app/api/webhooks/mandarin3d/route.ts](mdc:app/api/webhooks/mandarin3d/route.ts)** - Webhook endpoint to receive processing callbacks
+- **[lib/mandarin3d-example.ts](mdc:lib/mandarin3d-example.ts)** - Usage examples (if exists)
+
+## Basic Usage
+
+### 1. Initialize the Client
+
+```typescript
+import Mandarin3DApiClient from '@/lib/mandarin3d-api';
+
+const client = new Mandarin3DApiClient();
+// Or with custom base URL:
+// const client = new Mandarin3DApiClient('https://custom-api.com');
+```
+
+### 2. Submit Files for Processing
+
+#### Option A: From URL
+```typescript
+const response = await client.sliceFromUrl({
+  file_url: 'https://example.com/model.stl',
+  callback_url: 'https://yourdomain.com/api/webhooks/mandarin3d',
+  file_id: 'unique-file-id-123',
+  max_dimensions: {
+    x: 250, // P1S printer limits
+    y: 250,
+    z: 250,
+  },
+});
+```
+
+#### Option B: From File Upload
+```typescript
+const file = // File object from form input
+const response = await client.sliceFromFile({
+  model_file: file,
+  callback_url: 'https://yourdomain.com/api/webhooks/mandarin3d',
+  file_id: 'unique-file-id-123',
+  max_x: 340, // H2S printer limits for larger prints
+  max_y: 320,
+  max_z: 340,
+});
+```
+
+## Printer Specifications
+
+Use these dimension limits based on your target printer:
+
+### BambuLabs P1S (Standard)
+```typescript
+max_dimensions: { x: 250, y: 250, z: 250 }
+```
+
+### BambuLabs H2S (Large Format)
+```typescript
+max_dimensions: { x: 340, y: 320, z: 340 }
+```
+
+## Webhook Handling
+
+The webhook endpoint at `/api/webhooks/mandarin3d` automatically:
+
+1. **Receives callbacks** from the Mandarin3D API
+2. **Type-safe payload handling** using discriminated unions
+3. **Logs all payloads** to console for debugging
+4. **Provides TODO markers** for database integration
+
+### Webhook Payload Types
+
+#### Success Callback
+```typescript
+{
+  file_id: string;
+  status: 'success';
+  mass_grams: number;
+  dimensions: { x: number; y: number; z: number; };
+  processing_time: number;
+  slicer_time: number;
+  timestamp: number;
+}
+```
+
+#### Error Callback
+```typescript
+{
+  file_id: string;
+  status: 'error';
+  error: string;
+  dimensions?: { x: number; y: number; z: number; };
+  processing_time: number;
+  timestamp: number;
+}
+```
+
+### Extending Webhook Functionality
+
+To integrate with your database, modify [app/api/webhooks/mandarin3d/route.ts](mdc:app/api/webhooks/mandarin3d/route.ts):
+
+```typescript
+if (Mandarin3DApiClient.isSuccessCallback(payload)) {
+  // Store successful processing results
+  await db.updateFile(payload.file_id, {
+    status: 'processed',
+    mass_grams: payload.mass_grams,
+    dimensions: payload.dimensions,
+    processing_time: payload.processing_time,
+  });
+  
+  // Calculate pricing based on mass_grams
+  const price = calculatePrintingPrice(payload.mass_grams);
+  
+  // Notify user of completion
+  await notifyUser(payload.file_id, { price, dimensions: payload.dimensions });
+  
+} else if (Mandarin3DApiClient.isErrorCallback(payload)) {
+  // Handle processing errors
+  await db.updateFile(payload.file_id, {
+    status: 'error',
+    error_message: payload.error,
+  });
+  
+  // Notify user of failure
+  await notifyUser(payload.file_id, { error: payload.error });
+}
+```
+
+## Supported File Formats
+
+**Native Processing:** STL
+
+**Auto-converted to STL:** OBJ, PLY, OFF, 3MF, GLTF, GLB, DAE, X3D, WRL, VRML, STEP, STP, IGES, IGS, COLLADA, BLEND
+
+## Error Handling
+
+### Common Error Scenarios
+
+1. **File Conversion Failure**
+   ```typescript
+   {
+     status: 'error',
+     error: 'Failed to convert file to STL format'
+   }
+   ```
+
+2. **Dimension Limits Exceeded**
+   ```typescript
+   {
+     status: 'error',
+     error: 'Dimension X too large. Model dimensions: 350.00x200.00x100.00mm. Max allowed: 300x300x300mm.',
+     dimensions: { x: 350.0, y: 200.0, z: 100.0 }
+   }
+   ```
+
+### Client-Side Error Handling
+```typescript
+try {
+  const response = await client.sliceFromUrl(request);
+  console.log('Processing started:', response.file_id);
+} catch (error) {
+  console.error('Failed to submit file:', error);
+  // Handle network errors, invalid requests, etc.
+}
+```
+
+## Integration with File Upload Components
+
+When integrating with existing file upload components like [components/FileUpload.tsx](mdc:components/FileUpload.tsx):
+
+```typescript
+const handleFileUpload = async (file: File) => {
+  try {
+    // Generate unique file ID
+    const fileId = `${Date.now()}-${file.name}`;
+    
+    // Submit to Mandarin3D API
+    const response = await client.sliceFromFile({
+      model_file: file,
+      callback_url: `${window.location.origin}/api/webhooks/mandarin3d`,
+      file_id: fileId,
+      max_x: 250, // Choose based on printer type
+      max_y: 250,
+      max_z: 250,
+    });
+    
+    // Store initial processing state
+    await storeFileRecord({
+      id: fileId,
+      filename: file.name,
+      status: 'processing',
+      original_format: response.original_format,
+    });
+    
+    // Show user that processing has started
+    showNotification(`File ${file.name} submitted for processing`);
+    
+  } catch (error) {
+    showError('Failed to process file');
+  }
+};
+```
+
+## Environment Variables
+
+Set these in your `.env.local`:
+
+```bash
+# Your app's public URL for webhook callbacks
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+# Optional: Custom Mandarin3D API URL (defaults to https://m3d-api.sevalla.app)
+MANDARIN3D_API_URL=https://custom-api.com
+```
+
+## Testing the Integration
+
+1. **Test webhook endpoint**: GET `/api/webhooks/mandarin3d` returns status
+2. **Submit test file**: Use a small STL file to verify end-to-end flow
+3. **Monitor logs**: Check console output for callback reception
+4. **Verify file processing**: Confirm mass and dimension calculations
+
+## Type Safety
+
+All API interactions are fully typed with TypeScript:
+
+- Import types: `import { SliceRequest, CallbackPayload } from '@/lib/mandarin3d-api'`
+- Use type guards: `Mandarin3DApiClient.isSuccessCallback(payload)`
+- Leverage discriminated unions for webhook payload handling
