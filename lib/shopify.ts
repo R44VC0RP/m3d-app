@@ -110,7 +110,6 @@ export async function createDraftOrder(input: CreateDraftOrderInput): Promise<Dr
   const response = await client.post({
     path: 'draft_orders',
     data: draftOrderData,
-    type: 'application/json',
   });
 
   const draftOrder = (response.body as { draft_order: DraftOrderResponse }).draft_order;
@@ -142,7 +141,6 @@ export async function completeDraftOrder(draftOrderId: number): Promise<{ order_
   const response = await client.put({
     path: `draft_orders/${draftOrderId}/complete`,
     data: {},
-    type: 'application/json',
   });
 
   const draftOrder = (response.body as { draft_order: { order_id: number } }).draft_order;

@@ -118,9 +118,10 @@ function useOBJGeometry(url: string): GeometryResult {
         let geo: THREE.BufferGeometry | null = null
         obj.traverse((child) => {
           if (child instanceof THREE.Mesh && !geo) {
-            geo = child.geometry.clone()
-            geo.center()
-            geo.computeBoundingBox()
+            const cloned = child.geometry.clone()
+            cloned.center()
+            cloned.computeBoundingBox()
+            geo = cloned
           }
         })
         
@@ -169,9 +170,10 @@ function useGLTFGeometry(url: string): GeometryResult {
         let geo: THREE.BufferGeometry | null = null
         gltf.scene.traverse((child) => {
           if (child instanceof THREE.Mesh && !geo) {
-            geo = child.geometry.clone()
-            geo.center()
-            geo.computeBoundingBox()
+            const cloned = child.geometry.clone()
+            cloned.center()
+            cloned.computeBoundingBox()
+            geo = cloned
           }
         })
         
@@ -260,9 +262,10 @@ function use3MFGeometry(url: string): GeometryResult {
         let geo: THREE.BufferGeometry | null = null
         object.traverse((child) => {
           if (child instanceof THREE.Mesh && !geo) {
-            geo = child.geometry.clone()
-            geo.center()
-            geo.computeBoundingBox()
+            const cloned = child.geometry.clone()
+            cloned.center()
+            cloned.computeBoundingBox()
+            geo = cloned
           }
         })
         
