@@ -167,7 +167,7 @@ export function CustomerShowcase({ items }: { items: ShowcaseItem[] }) {
           <div className="flex flex-col gap-2">
             <p className="text-muted-foreground">Customer Showcase</p>
             <h2 className="text-2xl font-medium tracking-tight text-foreground">
-              Our favourite goodies ordered by our favourite people
+              Our favorite goodies ordered by our favorite people
             </h2>
           </div>
 

@@ -1,8 +1,14 @@
 import React from "react"
-import { Card, CardProps } from "./ui/card"
+import { Card } from "./ui/card"
+
+interface OtherProductItem {
+  title: string
+  description: string
+  imageUrl: string
+}
 
 interface OtherProductsProps {
-  items: CardProps[]
+  items: OtherProductItem[]
 }
 
 export function OtherProducts({ items }: OtherProductsProps) {
@@ -17,12 +23,15 @@ export function OtherProducts({ items }: OtherProductsProps) {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           {items.map((item, idx) => (
-            <Card
-              key={idx}
-              title={item.title}
-              description={item.description}
-              imageUrl={item.imageUrl}
-            />
+            <Card key={idx}>
+              <div className="flex flex-col gap-4">
+                <img src={item.imageUrl} alt={item.title} className="w-full h-48 object-cover rounded-lg" />
+                <div>
+                  <h3 className="text-xl font-semibold">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
+                </div>
+              </div>
+            </Card>
           ))}
         </div>
       </div>

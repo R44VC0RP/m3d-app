@@ -1,5 +1,48 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment Variables
+
+Create a `.env.local` file with the following variables:
+
+### Required
+
+```bash
+# Database (Neon PostgreSQL)
+DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
+
+# Upstash Redis (Realtime updates)
+UPSTASH_REDIS_REST_URL=https://your-redis.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your-upstash-token
+
+# App URL
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### Shopify Integration (Headless Checkout)
+
+```bash
+# Your Shopify store domain (e.g., your-store.myshopify.com)
+SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
+
+# Shopify Admin API credentials
+# Create a custom app in Shopify Admin > Settings > Apps and sales channels > Develop apps
+# Required scopes: write_draft_orders, read_draft_orders, read_orders, write_orders
+SHOPIFY_API_KEY=your-api-key
+SHOPIFY_API_SECRET=your-api-secret
+SHOPIFY_ADMIN_API_ACCESS_TOKEN=shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Shopify Webhook Secret (found in your Shopify app settings under "Webhooks")
+# Register webhooks for: orders/create, orders/paid, orders/fulfilled
+SHOPIFY_WEBHOOK_SECRET=your-webhook-secret
+```
+
+### Optional
+
+```bash
+# Mandarin3D Slicing API (defaults to production)
+MANDARIN3D_API_URL=https://m3d-api.sevalla.app
+```
+
 ## Getting Started
 
 First, run the development server:

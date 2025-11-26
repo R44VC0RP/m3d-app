@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Logo } from "./logo"
 import Image from "next/image"
+import Link from "next/link"
 
 export function Hero() {
   return (
@@ -24,18 +25,22 @@ export function Hero() {
 
             {/* CTA Button */}
             <div className="flex gap-2">
-              <Button variant="primary-accent" size="medium">
-                Get an Instant Quote
-              </Button>
-              <Button variant="primary" size="medium">
-                Contact Sales
-              </Button>
+              <Link href="/upload">
+                <Button variant="primary" size="medium">
+                  Get an Instant Quote
+                </Button>
+              </Link>
+              <Link href="/contact">
+                <Button variant="secondary" size="medium">
+                  Contact Sales
+                </Button>
+              </Link>
             </div>
           </div>
 
           {/* Right side - Image */}
           <div className="relative">
-            <div className="relative aspect-square max-w-lg mx-auto lg:mx-0">
+            <div className="relative aspect-square max-w-md mx-auto lg:mx-0">
               <Image
                 src="/h2s-image.png"
                 alt="3D Printer - H2S Model"

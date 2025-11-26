@@ -1,127 +1,200 @@
 "use client";
 
-
-import BackgroundMask from "@/components/BackgroundMask";
-import ScrollButton from "@/components/ScrollButton";
-
-import { Button } from "@/components/ui/button";
-import { useUser } from "@clerk/nextjs";
-import { useQuery } from "convex/react";
-import { api } from "../../convex/_generated/api";
-import { redirect } from "next/navigation";
 import { Header } from "@/components/header";
+import { Button } from "@/components/ui/button";
+import { useSession, signOut } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { useState, useRef } from "react";
+import { Loader2, LogOut, Upload, Package, FileText, Clock, ChevronRight, User, Camera, Trash2 } from "lucide-react";
+import Link from "next/link";
 
-// Dashboard Stats Component
-function DashboardStats() {
+// Format date to readable string
+function formatDate(date: Date | string | undefined) {
+  if (!date) return "—";
+  const d = new Date(date);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+// User Info Section with Avatar Upload
+function UserInfoSection({ 
+  user, 
+  onAvatarUpdate 
+}: { 
+  user: { name: string; email: string; createdAt?: Date; image?: string | null };
+  onAvatarUpdate: () => void;
+}) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/avatar', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to upload avatar');
+      }
+
+      // Trigger session refresh to get updated user data
+      onAvatarUpdate();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to upload avatar');
+    } finally {
+      setIsUploading(false);
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user.image) return;
+
+    setIsRemoving(true);
+    setError(null);
+
+    try {
+      const response = await fetch('/api/avatar', {
+        method: 'DELETE',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to remove avatar');
+      }
+
+      onAvatarUpdate();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to remove avatar');
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   return (
-    <section className="py-16">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Active Orders</p>
-              <p className="text-2xl font-bold text-white">3</p>
+    <section className="py-8 border-b border-border">
+      <div className="flex items-start gap-6">
+        {/* Avatar with Upload */}
+        <div className="shrink-0 relative group">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            className="hidden"
+            onChange={handleFileSelect}
+            disabled={isUploading}
+          />
+          
+          {user.image ? (
+            <img
+              src={user.image}
+              alt={user.name}
+              className="w-20 h-20 rounded-[12px] corner-squircle object-cover border border-border"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-[12px] corner-squircle bg-muted flex items-center justify-center border border-border">
+              <User className="w-10 h-10 text-muted-foreground" />
             </div>
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
+          )}
+
+          {/* Upload/Edit Overlay */}
+          <div 
+            className="absolute inset-0 rounded-[12px] corner-squircle bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer"
+            onClick={() => !isUploading && fileInputRef.current?.click()}
+          >
+            {isUploading ? (
+              <Loader2 className="w-6 h-6 text-white animate-spin" />
+            ) : (
+              <Camera className="w-6 h-6 text-white" />
+            )}
           </div>
+
+          {/* Remove button (only if has image) */}
+          {user.image && !isUploading && (
+            <button
+              onClick={handleRemoveAvatar}
+              disabled={isRemoving}
+              className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-destructive text-white hover:bg-destructive/90 transition-colors shadow-sm"
+              title="Remove avatar"
+            >
+              {isRemoving ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Trash2 className="w-3 h-3" />
+              )}
+            </button>
+          )}
         </div>
 
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Total Spent</p>
-              <p className="text-2xl font-bold text-white">$247.99</p>
-            </div>
-            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-              </svg>
-            </div>
-          </div>
+        {/* Info */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-bold tracking-tight truncate">{user.name}</h1>
+          <p className="text-muted-foreground mt-0.5">{user.email}</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            Member since {formatDate(user.createdAt)}
+          </p>
+          {error && (
+            <p className="text-sm text-destructive mt-2">{error}</p>
+          )}
         </div>
 
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Files Uploaded</p>
-              <p className="text-2xl font-bold text-white">12</p>
-            </div>
-            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-400">Completed Orders</p>
-              <p className="text-2xl font-bold text-white">8</p>
-            </div>
-            <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-              <svg className="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-          </div>
+        {/* Actions */}
+        <div className="shrink-0">
+          <Button
+            variant="secondary"
+            size="medium"
+            onClick={() => signOut()}
+            className="gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Sign Out
+          </Button>
         </div>
       </div>
     </section>
   );
 }
 
-// Recent Orders Component
-function RecentOrders() {
-  return (
-    <section className="py-16">
-      <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-bold text-white">Recent Orders</h2>
-        <Button variant="link" size="medium">
-          View All Orders
-        </Button>
-      </div>
+// Stats Overview Row
+function StatsRow() {
+  // TODO: Fetch actual stats from API
+  const stats = [
+    { label: "Active Orders", value: "0", icon: Package },
+    { label: "Files Uploaded", value: "0", icon: FileText },
+    { label: "Total Prints", value: "0", icon: Clock },
+  ];
 
-      <div className="space-y-4">
-        {[
-          { id: "ORD-001", item: "Custom Phone Case", status: "Processing", date: "2024-01-15", amount: "$29.99" },
-          { id: "ORD-002", item: "Mechanical Keyboard Kit", status: "Shipped", date: "2024-01-12", amount: "$79.99" },
-          { id: "ORD-003", item: "Desktop Organizer", status: "Delivered", date: "2024-01-08", amount: "$34.99" },
-        ].map((order) => (
-          <div key={order.id} className="p-6 bg-white/5 backdrop-blur-sm border-white/10 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <div className="flex items-center space-x-4">
-                  <div>
-                    <p className="font-semibold text-white">{order.item}</p>
-                    <p className="text-sm text-gray-400">Order #{order.id}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-6">
-                <div className="text-right">
-                  <p className="text-sm text-gray-400">Date</p>
-                  <p className="text-white">{order.date}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-400">Amount</p>
-                  <p className="text-white font-semibold">{order.amount}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-gray-400">Status</p>
-                  <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
-                    order.status === 'Delivered' ? 'bg-green-500/20 text-green-400' :
-                    order.status === 'Shipped' ? 'bg-blue-500/20 text-blue-400' :
-                    'bg-orange-500/20 text-orange-400'
-                  }`}>
-                    {order.status}
-                  </span>
-                </div>
+  return (
+    <section className="py-8 border-b border-border">
+      <div className="grid grid-cols-3 divide-x divide-border">
+        {stats.map((stat) => (
+          <div key={stat.label} className="px-6 first:pl-0 last:pr-0">
+            <div className="flex items-center gap-3">
+              <stat.icon className="w-5 h-5 text-muted-foreground" />
+              <div>
+                <p className="text-2xl font-semibold tracking-tight">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
               </div>
             </div>
           </div>
@@ -131,96 +204,258 @@ function RecentOrders() {
   );
 }
 
-// Quick Actions Component
-function QuickActions() {
+// Recent Orders Table
+function RecentOrdersTable() {
+  // TODO: Fetch actual orders from API
+  const orders: { id: string; status: string; items: number; total: string; date: string }[] = [];
+
   return (
-    <section className="py-16">
-      <h2 className="text-3xl font-bold text-white mb-8">Quick Actions</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors cursor-pointer rounded-lg">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Upload New File</h3>
-            <p className="text-gray-400 text-sm">Upload STL files for 3D printing</p>
-          </div>
-        </div>
+    <section className="py-8">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Recent Orders</h2>
+        <Link href="/orders" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+          View all
+          <ChevronRight className="w-4 h-4" />
+        </Link>
+      </div>
 
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors cursor-pointer rounded-lg">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Request Quote</h3>
-            <p className="text-gray-400 text-sm">Get a custom quote for your project</p>
+      {orders.length === 0 ? (
+        <div className="border border-border rounded-lg">
+          <div className="px-6 py-12 text-center">
+            <Package className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
+            <p className="text-muted-foreground">No orders yet</p>
+            <p className="text-sm text-muted-foreground/80 mt-1">
+              Upload a 3D file to get started with your first print
+            </p>
           </div>
         </div>
+      ) : (
+        <div className="border border-border rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">Order ID</th>
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">Status</th>
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">Items</th>
+                <th className="text-right text-sm font-medium text-muted-foreground px-4 py-3">Total</th>
+                <th className="text-right text-sm font-medium text-muted-foreground px-4 py-3">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {orders.map((order) => (
+                <tr key={order.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-3 text-sm font-medium">{order.id}</td>
+                  <td className="px-4 py-3 text-sm">{order.status}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{order.items}</td>
+                  <td className="px-4 py-3 text-sm text-right">{order.total}</td>
+                  <td className="px-4 py-3 text-sm text-right text-muted-foreground">{order.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
 
-        <div className="p-6 bg-white/5 backdrop-blur-sm border-white/10 hover:bg-white/10 transition-colors cursor-pointer rounded-lg">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Browse Products</h3>
-            <p className="text-gray-400 text-sm">Explore our product catalog</p>
+// Recent Files Table
+function RecentFilesTable() {
+  // TODO: Fetch actual files from API
+  const files: { id: string; name: string; status: string; dimensions: string; date: string }[] = [];
+
+  return (
+    <section className="py-8 border-t border-border">
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Recent Files</h2>
+        <Link href="/cart" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
+          View all
+          <ChevronRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {files.length === 0 ? (
+        <div className="border border-border rounded-lg">
+          <div className="px-6 py-12 text-center">
+            <FileText className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
+            <p className="text-muted-foreground">No files uploaded</p>
+            <p className="text-sm text-muted-foreground/80 mt-1 mb-4">
+              Drop your STL, OBJ, or STEP files to get instant quotes
+            </p>
+            <Link href="/cart">
+              <Button variant="primary" size="medium" className="gap-2">
+                <Upload className="w-4 h-4" />
+                Upload Files
+              </Button>
+            </Link>
           </div>
         </div>
+      ) : (
+        <div className="border border-border rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-border bg-muted/30">
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">File Name</th>
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">Status</th>
+                <th className="text-left text-sm font-medium text-muted-foreground px-4 py-3">Dimensions</th>
+                <th className="text-right text-sm font-medium text-muted-foreground px-4 py-3">Uploaded</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {files.map((file) => (
+                <tr key={file.id} className="hover:bg-muted/20 transition-colors">
+                  <td className="px-4 py-3 text-sm font-medium truncate max-w-[200px]">{file.name}</td>
+                  <td className="px-4 py-3 text-sm">{file.status}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{file.dimensions}</td>
+                  <td className="px-4 py-3 text-sm text-right text-muted-foreground">{file.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
+
+// Quick Actions
+function QuickActions() {
+  const actions = [
+    {
+      label: "Upload New File",
+      description: "Get an instant quote for your 3D model",
+      href: "/cart",
+      icon: Upload,
+    },
+    {
+      label: "Browse Shop",
+      description: "Explore our curated products",
+      href: "/",
+      icon: Package,
+    },
+  ];
+
+  return (
+    <section className="py-8 border-t border-border">
+      <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {actions.map((action) => (
+          <Link
+            key={action.label}
+            href={action.href}
+            className="group flex items-center gap-4 p-4 border border-border rounded-lg hover:border-primary/50 hover:bg-muted/20 transition-all"
+          >
+            <div className="p-2 rounded-md bg-muted group-hover:bg-primary/10 transition-colors">
+              <action.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium">{action.label}</p>
+              <p className="text-sm text-muted-foreground">{action.description}</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted-foreground/50 group-hover:text-primary/50 transition-colors" />
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// Account Details Table
+function AccountDetailsTable({ user }: { user: { name: string; email: string; emailVerified?: boolean; createdAt?: Date } }) {
+  const details = [
+    { label: "Name", value: user.name },
+    { label: "Email", value: user.email },
+    { label: "Email Verified", value: user.emailVerified ? "Yes" : "No" },
+    { label: "Account Created", value: formatDate(user.createdAt) },
+  ];
+
+  return (
+    <section className="py-8 border-t border-border">
+      <h2 className="text-lg font-semibold mb-4">Account Details</h2>
+      <div className="border border-border rounded-lg overflow-hidden">
+        <table className="w-full">
+          <tbody className="divide-y divide-border">
+            {details.map((detail) => (
+              <tr key={detail.label}>
+                <td className="px-4 py-3 text-sm text-muted-foreground w-1/3">{detail.label}</td>
+                <td className="px-4 py-3 text-sm font-medium">{detail.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </section>
   );
 }
 
 export default function DashboardPage() {
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { data: session, isPending, refetch } = useSession();
+  const router = useRouter();
 
-  // Show loading state while checking authentication
-  if (!isLoaded) {
+  // Redirect to sign in if not authenticated
+  if (!isPending && !session?.user) {
+    router.push("/signin");
+    return null;
+  }
+
+  if (isPending) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white">Loading...</p>
+      <main className="[&::-webkit-scrollbar]:hidden">
+        <div className="max-w-5xl mx-auto">
+          <Header />
+          <div className="flex items-center justify-center py-32">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
         </div>
       </main>
     );
   }
 
-  // Redirect to home if not signed in
-  if (!isSignedIn) {
-    redirect('/');
+  const user = session?.user;
+
+  if (!user) {
+    return null;
   }
+
+  // Force page reload to get fresh session data after avatar update
+  const handleAvatarUpdate = () => {
+    // Refetch session to get updated user data
+    refetch();
+  };
 
   return (
     <main className="[&::-webkit-scrollbar]:hidden">
-      <div className="absolute inset-0 -z-10">
-        <BackgroundMask />
-      </div>
       <div className="max-w-5xl mx-auto">
         <Header />
-        
-        {/* Welcome Section */}
-        <section className="py-16 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            Welcome back, {user?.firstName || 'there'}!
-          </h1>
-          <p className="text-xl text-gray-300 mb-8">
-            Manage your orders, files, and projects all in one place.
-          </p>
-        </section>
-
-        <DashboardStats />
-        <RecentOrders />
-        <QuickActions />
       </div>
-      <ScrollButton />
+      <div className="max-w-5xl mx-auto px-4">
+        <UserInfoSection
+          user={{
+            name: user.name,
+            email: user.email,
+            createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
+            image: user.image,
+          }}
+          onAvatarUpdate={handleAvatarUpdate}
+        />
+
+        <StatsRow />
+
+        <RecentOrdersTable />
+
+        <RecentFilesTable />
+
+        <QuickActions />
+
+        <AccountDetailsTable
+          user={{
+            name: user.name,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            createdAt: user.createdAt ? new Date(user.createdAt) : undefined,
+          }}
+        />
+      </div>
     </main>
   );
 }

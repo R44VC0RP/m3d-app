@@ -1,9 +1,6 @@
 ---
-description:
-globs:
-alwaysApply: true
+alwaysApply: false
 ---
-
 # UTApi - UploadThing Docs
 
 The UploadThing API Helper, for use ON YOUR SERVER. It's basically just a REST API but better.
