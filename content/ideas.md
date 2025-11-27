@@ -82,7 +82,7 @@
 ## Applications & Use Cases
 
 - [x] **10 Practical Household Items You Can 3D Print**
-- [ ] **3D Printing for Cosplay: Armor, Props, and Accessories**
+- [x] **3D Printing for Cosplay: Armor, Props, and Accessories**
 - [ ] **Custom Phone Cases and Tech Accessories**
 - [ ] **3D Printed Replacement Parts: Fixing What Manufacturers Won't**
 - [ ] **Prototype to Product: How Businesses Use 3D Printing**
