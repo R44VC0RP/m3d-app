@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import { CartItem, CartItemData, FileStatus } from '@/components/CartItem';
 import { getAvailableColors, PrintColor } from '@/lib/colors';
 import { useSessionContext } from '@/components/SessionProvider';
@@ -374,12 +375,12 @@ function CartPageContent() {
   }
 
   return (
-    <main className="min-h-screen bg-background pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-background pb-20 flex flex-col">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <Header />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 flex-grow w-full">
         <div className="mb-8">
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold tracking-tight">Your Cart</h1>
@@ -799,6 +800,7 @@ function CartPageContent() {
           </div>
         )}
       </div>
+      <Footer />
     </main>
   );
 }

@@ -51,10 +51,11 @@ export function Header() {
   }, [])
 
   const user = session?.user
+  const disableMorph = true
 
   return (
-    <header className="sticky top-2 sm:top-4 z-50 w-full flex justify-center transition-all duration-300">
-      <div className={`mx-auto transition-all duration-300 ${isScrolled ? 'w-[100%] bg-white/80 shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.04),0_4px_4px_0_rgba(0,0,0,0.02)] backdrop-blur-lg rounded-[12px] corner-squircle border border-[#d1d1d1]' : 'container'}`}>
+    <header className={`sticky top-2 sm:top-4 z-50 w-full flex justify-center transition-all duration-300 ${disableMorph ? '' : 'morph-shadow'}`}>
+      <div className={`mx-auto transition-all duration-300 ${isScrolled ? `w-[100%] bg-white/80 ${disableMorph ? '' : 'shadow-[inset_0_-3px_4px_0_rgba(0,0,0,0.04),0_4px_4px_0_rgba(0,0,0,0.02)]'} backdrop-blur-lg rounded-[12px] corner-squircle border border-[#d1d1d1]` : 'container'}`}>
         <div className="flex h-14 sm:h-16 items-center justify-between px-3 sm:px-4">
           {/* Logo */}
           <div className="flex-shrink-0">

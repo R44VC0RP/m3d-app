@@ -141,6 +141,12 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-title" content="Mandarin 3D" />
         <link rel="canonical" href="https://mandarin3d.com" />
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Mandarin3D Blog RSS Feed"
+          href="https://mandarin3d.com/blog/feed.xml"
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

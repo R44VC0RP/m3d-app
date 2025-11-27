@@ -24,6 +24,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "https://mandarin3d.com/blog",
+    types: {
+      "application/rss+xml": "https://mandarin3d.com/blog/feed.xml",
+    },
   },
 };
 

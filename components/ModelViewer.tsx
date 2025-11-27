@@ -1,3 +1,5 @@
+'use client';
+
 import React, { Suspense, useMemo, useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
@@ -13,6 +15,7 @@ interface ModelViewerProps {
   filename?: string
   className?: string
   enableControls?: boolean
+  cameraZoom?: number
 }
 
 type SupportedFormat = 'stl' | 'obj' | 'gltf' | 'glb' | 'ply' | '3mf' | 'unsupported'
@@ -435,7 +438,8 @@ export default function ModelViewer({
   modelUrl, 
   filename,
   className = "w-full h-32", 
-  enableControls = false 
+  enableControls = false,
+  cameraZoom = 40
 }: ModelViewerProps) {
   return (
     <div className={className}>
@@ -443,7 +447,7 @@ export default function ModelViewer({
         orthographic
         camera={{
           position: [5, 5, 5],
-          zoom: 40,
+          zoom: cameraZoom,
           near: 0.1,
           far: 1000,
         }}

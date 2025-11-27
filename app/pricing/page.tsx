@@ -29,9 +29,61 @@ export const metadata: Metadata = {
   },
 };
 
+// FAQ Schema for rich results
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "How accurate is the instant quote?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Very accurate. The system uses professional slicing software to calculate exact material usage. The price you see when you upload is the price you pay (plus shipping and any add-ons you select).",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Do you offer volume discounts?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "For larger orders or ongoing production runs, reach out at orders@mandarin3d.com. We're happy to discuss custom pricing for bulk work—like the 3,500+ keychains we did for Vercel.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What if my file is too big for your printers?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Standard P1S printers handle up to 250×250×250mm. For larger parts (up to 340×320×340mm), we have H2S printers available. If your part exceeds those dimensions, we can discuss splitting it into multiple pieces.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Are there any hidden fees?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "No. The price shown is what you pay for printing. Shipping is calculated separately at checkout based on your location and package size—we use actual carrier rates with no markup.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What's the turnaround time?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Most orders ship within about a week. If you need it faster, add Queue Priority and we'll bump your order to the front.",
+      },
+    },
+  ],
+};
+
 export default function PricingPage() {
   return (
     <main className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <div className="max-w-5xl mx-auto">
         <Header />
       </div>

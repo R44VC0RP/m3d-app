@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
 import { Hero } from "@/components/hero";
 import { FileUpload } from "@/components/FileUpload";
 import BackgroundMask from "@/components/BackgroundMask";
@@ -136,6 +137,7 @@ export default async function Home() {
         {/* <OtherProducts items={otherProducts} /> */}
         <CustomerShowcase items={customerShowcase} />
       </div>
+      <Footer />
       <ScrollButton />
     </main>
   );

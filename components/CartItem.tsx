@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Minus, Plus, Link as LinkIcon, Copy, Check, Loader2, AlertCircle, CheckCircle2 } from "lucide-react"
 import { PrintColor } from "@/lib/colors"
+import Link from "next/link"
 import { useState } from "react"
 import dynamic from "next/dynamic"
 
@@ -132,8 +133,10 @@ export function CartItem({ item, colors, onUpdate, onRemove }: CartItemProps) {
           {/* Column 2: File Info */}
           <div className="flex flex-col gap-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <h3 className="font-bold text-base truncate" title={item.filename}>{item.filename}</h3>
-              <LinkIcon className="w-3.5 h-3.5 text-primary cursor-pointer hover:text-primary/80 shrink-0" />
+              <Link href={`/file/${item.fileId}`} className="flex items-center gap-2 group/link hover:text-primary transition-colors min-w-0">
+                <h3 className="font-bold text-base truncate" title={item.filename}>{item.filename}</h3>
+                <LinkIcon className="w-3.5 h-3.5 text-primary/50 group-hover/link:text-primary shrink-0" />
+              </Link>
             </div>
             
             {/* Status Badge */}
