@@ -51,7 +51,7 @@
 
 ## Software & Tools
 
-- [ ] **Best Free CAD Software for 3D Printing in 2025**
+- [x] **Best Free CAD Software for 3D Printing in 2025**
 - [ ] **TinkerCAD vs Fusion 360: Which Should Beginners Use?**
 - [ ] **How to Use Blender for 3D Printing (A Practical Guide)**
 - [ ] **Fixing STL Errors: Tools and Techniques for Mesh Repair**
