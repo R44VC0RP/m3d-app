@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { inArray } from 'drizzle-orm';
+import { db } from '@/db';
+import { cartItem } from '@/db/schema';
 import { verifyWebhookSignature } from '@/lib/shopify';
+import { sendEmail } from '@/lib/email';
+import NewOrderPlacedEmail from '@/emails/NewOrderPlaced';
 
 // Shopify sends the raw body, we need to verify the HMAC signature
 export async function POST(request: NextRequest) {
@@ -123,8 +128,15 @@ async function handleOrderCreated(order: ShopifyOrder) {
     financialStatus: order.financial_status,
   });
 
-  // Extract file IDs from line item properties for fulfillment tracking
+  // Extract file IDs and build line items for the email
   const fileIds: string[] = [];
+  const lineItems: Array<{
+    title: string;
+    quantity: number;
+    price: string;
+    fileId?: string;
+    fileName?: string;
+  }> = [];
   
   for (const lineItem of order.line_items) {
     // Skip add-on items (they don't have file IDs)
@@ -135,10 +147,21 @@ async function handleOrderCreated(order: ShopifyOrder) {
     const fileIdProperty = lineItem.properties.find(
       (prop) => prop.name === 'File ID'
     );
+    const fileNameProperty = lineItem.properties.find(
+      (prop) => prop.name === 'File Name' || prop.name === 'Filename'
+    );
     
     if (fileIdProperty) {
       fileIds.push(fileIdProperty.value);
     }
+
+    lineItems.push({
+      title: lineItem.title,
+      quantity: lineItem.quantity,
+      price: lineItem.price,
+      fileId: fileIdProperty?.value,
+      fileName: fileNameProperty?.value,
+    });
   }
 
   console.log('File IDs in order:', fileIds);
@@ -155,9 +178,55 @@ async function handleOrderCreated(order: ShopifyOrder) {
     note: order.note,
   });
 
-  // TODO: Update database to mark cart items as "ordered"
+  // Send internal notification email to ryan@mandarin3d.com
+  const customerName = order.customer
+    ? `${order.customer.first_name} ${order.customer.last_name}`.trim()
+    : 'Unknown Customer';
+
+  const emailResult = await sendEmail({
+    to: 'ryan@mandarin3d.com',
+    subject: `🎉 New Order #${order.order_number} - ${customerName} ($${order.total_price})`,
+    react: NewOrderPlacedEmail({
+      orderNumber: `#${order.order_number}`,
+      customerName,
+      customerEmail: order.email,
+      totalPrice: order.total_price,
+      currency: order.currency,
+      lineItems,
+      hasMulticolor,
+      hasPriority,
+      needsAssistance,
+      orderNote: order.note ?? undefined,
+      shippingAddress: order.shipping_address ?? undefined,
+      shopifyAdminUrl: `https://mandarin3d.myshopify.com/admin/orders/${order.id}`,
+    }),
+  });
+
+  if (emailResult.success) {
+    console.log('Order notification email sent:', emailResult.id);
+  } else {
+    console.error('Failed to send order notification email:', emailResult.error);
+  }
+
+  // Clear the cart items that were part of this order
+  if (fileIds.length > 0) {
+    try {
+      const deleteResult = await db
+        .delete(cartItem)
+        .where(inArray(cartItem.uploadedFileId, fileIds));
+      
+      console.log('Cart items cleared for order:', {
+        orderNumber: order.order_number,
+        fileIds,
+        deleted: deleteResult.rowCount,
+      });
+    } catch (error) {
+      console.error('Failed to clear cart items:', error);
+      // Don't fail the webhook - cart clearing is non-critical
+    }
+  }
+
   // TODO: Trigger fulfillment workflow
-  // TODO: Send confirmation email if needed
   // TODO: If needsAssistance, trigger assistance workflow
   // TODO: If hasMulticolor, trigger design team notification
 }

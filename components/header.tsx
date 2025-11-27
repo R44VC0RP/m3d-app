@@ -67,15 +67,21 @@ export function Header() {
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* Desktop Navigation Links */}
             <nav className="hidden lg:flex items-center space-x-6">
-              <Button variant="link" size="medium">
-                Pricing
-              </Button>
-              <Button variant="link" size="medium">
-                Sales
-              </Button>
-              <Button variant="link" size="medium">
-                Library
-              </Button>
+              <Link href="/pricing">
+                <Button variant="link" size="medium">
+                  Pricing
+                </Button>
+              </Link>
+              <Link href="/blog">
+                <Button variant="link" size="medium">
+                  Blog
+                </Button>
+              </Link>
+              <Link href="/about">
+                <Button variant="link" size="medium">
+                  About
+                </Button>
+              </Link>
             </nav>
 
             {/* Action Buttons */}

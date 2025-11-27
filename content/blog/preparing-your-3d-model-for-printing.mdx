@@ -1,0 +1,89 @@
+---
+title: "Preparing Your 3D Model for Printing"
+description: "Common issues that cause 3D prints to fail and how to fix them before you upload. Save time and money by getting your file right the first time."
+date: "2025-01-10"
+author: "Mandarin3D"
+featuredImage: "/customerShowcase/mini_apple_cpu.jpeg"
+tags: ["tips", "design", "STL", "troubleshooting", "Mintlify"]
+category: "tutorials"
+---
+
+Nothing's worse than waiting for a print only to find out there was an issue with the model. Here are the most common problems I see—and how to fix them before you upload.
+
+## Check Your Wall Thickness
+
+This is the #1 cause of failed prints. Walls that are too thin either won't print at all or will be incredibly fragile.
+
+**The rule:** Keep walls at least 1.2mm thick. For functional parts, 2mm+ is better.
+
+Most CAD programs can analyze wall thickness. In Fusion 360, use the "Inspect" tool. In Blender, you can use the "3D Print Toolbox" addon.
+
+## Make Sure It's Watertight
+
+A "watertight" mesh means the model is completely closed—no holes, no gaps. Think of it like a balloon: if you filled it with water, would it leak?
+
+**Common causes of non-watertight meshes:**
+- Flipped normals (faces pointing the wrong way)
+- Overlapping geometry
+- Gaps between surfaces that look closed but aren't
+
+**Quick fix:** Most slicing software can repair minor issues automatically, but major problems need to be fixed in your design software. Meshmixer (free from Autodesk) is great for repairs.
+
+## Watch Your Overhangs
+
+3D printers build layer by layer from the bottom up. That means anything that sticks out more than 45° from vertical needs support material underneath.
+
+**Options:**
+- Design self-supporting geometry when possible
+- Orient the part to minimize overhangs
+- Accept that supports will be needed (we handle this during slicing)
+
+Supports leave marks where they attach, so think about which surfaces matter most for your part.
+
+## Real Example: Custom Keycaps for Mintlify
+
+When Mintlify needed custom keycaps, the design had to be precise. Keycaps have tight tolerances—too thick and they won't fit, too thin and they'll break.
+
+![Custom keycaps with precise wall thickness and detailed features](/customerShowcase/keys.jpeg)
+
+The key to success? Proper wall thickness throughout the design and ensuring the stem geometry was exactly right. A well-prepared file meant these printed perfectly on the first try.
+
+## File Format Matters
+
+**STL** is the standard. It's what most people use and what we prefer.
+
+**3MF** is newer and better—it includes more information and handles colors/materials. Use it if your software exports it.
+
+**STEP/STP** works too. We'll convert it to STL, but you lose control over the mesh resolution.
+
+**OBJ, PLY, GLTF** and others are all supported, but STL or 3MF will give you the most predictable results.
+
+## Check the Scale
+
+This sounds obvious, but I get files all the time where a phone case is the size of a house or a bracket is measured in inches when it should be millimeters.
+
+Before exporting, double-check that your units are correct. Our system will show you the dimensions after upload—if something looks off, that's your sign.
+
+## Complex Designs Can Work
+
+Don't let complexity scare you off. This detailed piece came out great because the file was properly prepared:
+
+![Complex detailed 3D print with intricate geometry](/customerShowcase/tower.jpeg)
+
+The secret isn't avoiding detail—it's making sure walls are thick enough and the mesh is clean. Complex geometry prints beautifully when the fundamentals are right.
+
+## The Pre-Upload Checklist
+
+Before you hit upload:
+
+1. **Walls thick enough?** (1.2mm minimum)
+2. **Mesh watertight?** (No holes or gaps)
+3. **Units correct?** (mm, not inches or meters)
+4. **Within size limits?** (250mm max per side, or 340mm for H2S)
+5. **File format good?** (STL or 3MF preferred)
+
+## Need Help?
+
+If you're not sure whether your model will print well, add "Print Assistance" when you order (it's free). I'll review the file and reach out if anything needs attention before printing.
+
+Got a tricky design? [Email me](mailto:orders@mandarin3d.com) and we can figure it out together.

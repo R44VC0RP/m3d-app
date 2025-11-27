@@ -106,6 +106,17 @@ export const cartItem = pgTable("cart_item", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Blog cover images (AI generated and cached)
+export const blogCoverImage = pgTable("blog_cover_image", {
+  slug: text("slug").primaryKey(), // Blog post slug as primary key
+  imageData: text("image_data").notNull(), // Base64 encoded image
+  mimeType: text("mime_type").notNull().default("image/png"),
+  title: text("title").notNull(), // Original title used for generation
+  description: text("description").notNull(), // Original description used
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Export types
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
@@ -119,4 +130,6 @@ export type UploadedFile = typeof uploadedFile.$inferSelect;
 export type NewUploadedFile = typeof uploadedFile.$inferInsert;
 export type CartItem = typeof cartItem.$inferSelect;
 export type NewCartItem = typeof cartItem.$inferInsert;
+export type BlogCoverImage = typeof blogCoverImage.$inferSelect;
+export type NewBlogCoverImage = typeof blogCoverImage.$inferInsert;
 

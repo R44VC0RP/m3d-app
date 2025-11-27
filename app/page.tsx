@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { FileUpload } from "@/components/FileUpload";
@@ -6,6 +7,31 @@ import { OtherProducts } from "@/components/other-products";
 import ScrollButton from "@/components/ScrollButton";
 import { CustomerShowcase } from "@/components/customer-showcase";
 import VendorShowcase from "@/components/vendor-showcase";
+
+export const metadata: Metadata = {
+  title: "Custom 3D Printing | Instant Quotes | Mandarin3D",
+  description:
+    "Get instant quotes on custom 3D prints. Upload your STL, OBJ, or STEP file and we'll bring it to life. No middlemen, no minimums—just quality prints from Jacksonville, FL.",
+  keywords: [
+    "custom 3D printing",
+    "instant 3D print quote",
+    "Jacksonville 3D printing",
+    "upload STL file",
+    "3D print service",
+    "PLA printing",
+    "PETG printing",
+    "no minimum order 3D printing",
+  ],
+  openGraph: {
+    title: "Custom 3D Printing | Instant Quotes | Mandarin3D",
+    description:
+      "Upload your design, get an instant quote. Custom 3D printing done right—no middlemen, no minimums.",
+    url: "https://mandarin3d.com",
+  },
+  alternates: {
+    canonical: "https://mandarin3d.com",
+  },
+};
 
 function getOtherProducts() {
   return [

@@ -11,6 +11,18 @@ const config: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/js/script.js",
+        destination: "https://datafa.st/js/script.js",
+      },
+      {
+        source: "/api/datafast-events",
+        destination: "https://datafa.st/api/events",
+      },
+    ];
+  },
 };
 
 export default withWorkflow(config);
