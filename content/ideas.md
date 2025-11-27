@@ -6,7 +6,7 @@
 
 ## Getting Started / Beginner Guides
 
-- [ ] **Your First 3D Print: A Complete Beginner's Guide**
+- [x] **Your First 3D Print: A Complete Beginner's Guide**
 - [ ] **Understanding 3D File Formats: STL vs OBJ vs 3MF**
 - [ ] **How to Prepare Your 3D Model for Printing (The Right Way)**
 - [ ] **Common 3D Printing Terms Every Beginner Should Know**
@@ -191,6 +191,7 @@
 - [ ] **Spring Cleaning with 3D Printed Organizers**
 - [ ] **Summer Projects: Outdoor-Ready 3D Prints**
 - [ ] **Halloween Props and Costumes with 3D Printing**
+- [ ] **3D Printing Pet Accessories: Custom Tags, Bowls, and Toys**
 
 ---
 
