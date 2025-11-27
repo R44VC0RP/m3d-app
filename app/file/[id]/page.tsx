@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import { db } from '@/db';
 import { uploadedFile, cartItem } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
-import { getSessionId } from '@/lib/session';
+import { getOrCreateSessionId } from '@/lib/session';
 import { getAvailableColors } from '@/lib/colors';
 import FileDetailClient from './client';
 
@@ -12,12 +12,9 @@ interface PageProps {
 
 export default async function FileDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const sessionId = await getSessionId();
-
-  if (!sessionId) {
-    // Should not happen if middleware or flow is correct, but fallback
-    return notFound();
-  }
+  
+  // Get or create session - this ensures visitors can view files from remote submissions
+  const sessionId = await getOrCreateSessionId();
 
   // Fetch file details
   const [file] = await db
