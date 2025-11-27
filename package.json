@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "mdx:check": "bun run scripts/check-mdx.ts"
   },
   "dependencies": {
     "@google/genai": "^1.30.0",
