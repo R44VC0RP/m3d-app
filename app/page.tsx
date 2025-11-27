@@ -124,11 +124,11 @@ export default async function Home() {
   const otherProducts = await getOtherProducts();
   const customerShowcase = await getCustomerShowcase();
   return (
-    <main className="[&::-webkit-scrollbar]:hidden">
+    <main className="[&::-webkit-scrollbar]:hidden overflow-x-hidden">
       <div className="absolute inset-0 -z-10">
         <BackgroundMask />
       </div>
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-5xl mx-auto px-2 sm:px-4 lg:px-0">
         <Header />
         <Hero />
         <VendorShowcase />

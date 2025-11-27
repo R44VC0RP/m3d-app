@@ -206,20 +206,20 @@ export function FileUpload({ currentStep = 0 }: FileUploadProps) {
   };
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-10 sm:py-16 px-4">
       <div className="space-y-2">
-        <h2 className="text-3xl font-medium">Upload Your 3D Model</h2>
-        <p className="text-neutral-500">
+        <h2 className="text-2xl sm:text-3xl font-medium">Upload Your 3D Model</h2>
+        <p className="text-sm sm:text-base text-neutral-500">
           Drop your STL file and we'll help you bring it to life.
         </p>
       </div>
-      <div className="mt-8 flex justify-between gap-24">
-        <div className="flex-1">
+      <div className="mt-6 sm:mt-8 flex flex-col lg:flex-row justify-between gap-8 lg:gap-24">
+        <div className="flex-1 order-1">
           <div className="flex gap-8">
             {/* Upload Area */}
             <div className="w-full">
               <div
-                className={`border-1 border-dashed rounded-sm py-28 text-center cursor-pointer transition-colors
+                className={`border-1 border-dashed rounded-sm py-16 sm:py-28 text-center cursor-pointer transition-colors
                   ${
                     isDragging
                       ? "border-[#466F80] bg-[#466F80]/10"
@@ -238,11 +238,11 @@ export function FileUpload({ currentStep = 0 }: FileUploadProps) {
                   style={{ display: "none" }}
                   onChange={handleFileSelect}
                 />
-                <div className="flex flex-col items-center justify-center gap-4">
+                <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 px-4">
                   <Image
                     src={file_upload_icon}
                     alt="File upload"
-                    className={`w-1/3`}
+                    className={`w-1/2 sm:w-1/3 max-w-[150px]`}
                   />
                   {isDragging ? (
                     <div>
@@ -353,8 +353,8 @@ export function FileUpload({ currentStep = 0 }: FileUploadProps) {
             </div>
           </div>
         </div>
-        <div className="flex-1">
-          {/* Progress Steps */}
+        <div className="flex-1 order-2 hidden lg:block">
+          {/* Progress Steps - Hidden on mobile */}
           <div className="w-full">
             <div className="relative">
               {STEPS.map((step, index) => {

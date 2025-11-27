@@ -43,21 +43,14 @@ export const metadata: Metadata = {
     title: "Mandarin3D | Custom 3D Printing in Jacksonville, FL",
     description:
       "Custom 3D printing done right. Upload your design, get an instant quote. No middlemen, no minimums—just quality prints from Jacksonville, Florida.",
-    images: [
-      {
-        url: "/h2s-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Mandarin3D - Custom 3D Printing",
-      },
-    ],
+    // opengraph-image.jpeg in app/ is automatically used by Next.js
   },
   twitter: {
     card: "summary_large_image",
     title: "Mandarin3D | Custom 3D Printing in Jacksonville, FL",
     description:
       "Custom 3D printing done right. Upload your design, get an instant quote. No middlemen, no minimums.",
-    images: ["/h2s-image.png"],
+    // opengraph-image.jpeg in app/ is automatically used by Next.js
   },
   robots: {
     index: true,
@@ -80,7 +73,7 @@ const jsonLd = {
     "Custom 3D printing services in Jacksonville, Florida. No middlemen, no minimums. Upload your design and get an instant quote.",
   url: "https://mandarin3d.com",
   logo: "https://mandarin3d.com/favicon.svg",
-  image: "https://mandarin3d.com/h2s-image.png",
+  image: "https://mandarin3d.com/opengraph-image.jpeg",
   email: "orders@mandarin3d.com",
   address: {
     "@type": "PostalAddress",

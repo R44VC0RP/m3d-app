@@ -25,6 +25,17 @@ type LayoutConfig = {
   [itemId: string]: ItemPosition;
 };
 
+// Mobile grid class mapping for each item
+const mobileGridClasses: { [key: string]: string } = {
+  "1": "col-span-2 row-span-2",
+  "2": "col-span-1 row-span-2",
+  "3": "col-span-1 row-span-1",
+  "4": "col-span-1 row-span-1",
+  "5": "col-span-1 row-span-1",
+  "6": "col-span-1 row-span-1",
+  "7": "col-span-2 row-span-1",
+};
+
 export function CustomerShowcase({ items }: { items: ShowcaseItem[] }) {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState<MousePosition>({
@@ -32,7 +43,7 @@ export function CustomerShowcase({ items }: { items: ShowcaseItem[] }) {
     y: 0,
   });
 
-  // Grid cell dimensions
+  // Grid cell dimensions for desktop
   const cellWidth = 236;
   const cellHeight = 160;
   const gapX = 16;
@@ -161,17 +172,37 @@ export function CustomerShowcase({ items }: { items: ShowcaseItem[] }) {
   };
 
   return (
-    <section className="py-16 px-4">
+    <section className="py-10 sm:py-16 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-6 sm:gap-8">
           <div className="flex flex-col gap-2">
-            <p className="text-muted-foreground">Customer Showcase</p>
-            <h2 className="text-2xl font-medium tracking-tight text-foreground">
+            <p className="text-sm sm:text-base text-muted-foreground">Customer Showcase</p>
+            <h2 className="text-xl sm:text-2xl font-medium tracking-tight text-foreground">
               Our favorite goodies ordered by our favorite people
             </h2>
           </div>
 
-          <div className="mx-auto" style={{ width: "1024px", height: "550px" }}>
+          {/* Mobile Grid Layout */}
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:hidden">
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className={`${mobileGridClasses[item.id]} overflow-hidden rounded-xl`}
+                style={{
+                  minHeight: mobileGridClasses[item.id].includes("row-span-2") ? "200px" : "100px",
+                }}
+              >
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Interactive Layout */}
+          <div className="hidden lg:block mx-auto" style={{ width: "1024px", height: "550px" }}>
             <div
               className="relative"
               style={{
