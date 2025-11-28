@@ -1,0 +1,158 @@
+---
+title: "Common 3D Printing Terms Every Beginner Should Know"
+description: "A plain-English glossary of 3D printing terminology. From filament types to slicer settings, understand the language so you can communicate better with your print service."
+date: "2025-11-28"
+author: "Mandarin3D"
+tags: ["beginners", "guides", "terminology", "glossary", "tips"]
+category: "guides"
+---
+
+When you first dive into 3D printing, the jargon can feel overwhelming. Layer height, infill, retraction, bridging—it sounds like a foreign language. But understanding these terms makes a real difference when you're ordering prints or discussing your project with a print service.
+
+Here's your no-nonsense guide to the terminology that actually matters.
+
+## The Basics: How FDM Printing Works
+
+**FDM (Fused Deposition Modeling)** is the technology behind most desktop 3D printers, including the BambuLab machines we use at Mandarin3D. A plastic filament is fed through a heated nozzle, melted, and deposited layer by layer to build up your object. Simple concept, but the details are where it gets interesting.
+
+**FFF (Fused Filament Fabrication)** means the same thing as FDM. The terms are interchangeable—FDM is a trademark held by Stratasys, so the open-source community created FFF to describe the same process.
+
+## Materials: The Filaments
+
+**Filament** is the raw material—a thin plastic thread wound on a spool. Most desktop printers use 1.75mm diameter filament, typically sold in 1kg spools. The type of filament determines your print's strength, flexibility, heat resistance, and appearance.
+
+### PLA (Polylactic Acid)
+
+The most popular filament for good reason. PLA is made from plant-based materials (usually corn starch), prints at lower temperatures, doesn't warp easily, and produces minimal fumes. It's the default choice for most prints.
+
+**Best for:** Decorative items, prototypes, cosplay pieces, gifts, anything that won't see high heat or heavy mechanical stress.
+
+**The catch:** Not great above 50-60°C—it'll soften in a hot car. Less impact-resistant than PETG or ABS.
+
+### PETG (Polyethylene Terephthalate Glycol)
+
+The middle ground between ease of PLA and strength of ABS. PETG is the same material family as water bottles—tough, slightly flexible, and more heat-resistant than PLA.
+
+**Best for:** Functional parts, outdoor items, anything that needs some durability. Great for mechanical components that might see stress.
+
+**The catch:** Slightly stringier to print than PLA, and the surface finish can be glossier (which some people don't prefer).
+
+### ABS (Acrylonitrile Butadiene Styrene)
+
+The classic engineering plastic—it's what LEGO bricks are made of. Strong, heat-resistant, and can be smoothed with acetone vapor for a glossy finish.
+
+**Best for:** Functional parts that need heat resistance or durability. Automotive applications, enclosures.
+
+**The catch:** Requires higher temperatures, tends to warp without an enclosed printer, and produces fumes you shouldn't breathe.
+
+### TPU (Thermoplastic Polyurethane)
+
+The flexible stuff. TPU produces rubber-like prints that bend, stretch, and absorb shock.
+
+**Best for:** Phone cases, gaskets, vibration dampeners, anything that needs to flex.
+
+**The catch:** Slower to print, requires specific printer configurations, not every service offers it.
+
+## Printer Components
+
+**Hotend** is the business end of the printer where filament gets melted. Temperature here depends on material—typically 200°C for PLA, 240°C for PETG, higher for ABS.
+
+**Nozzle** is the tiny opening at the end of the hotend where molten plastic comes out. The standard diameter is 0.4mm, which provides a good balance between detail and print speed. Smaller nozzles (0.2mm) can capture finer details; larger ones (0.6mm, 0.8mm) print faster but lose some precision.
+
+**Build plate** (or print bed) is the surface where your print is built. On our BambuLab printers, this is a textured PEI plate that provides excellent adhesion without needing tape or glue.
+
+**Build volume** refers to the maximum size you can print. At Mandarin3D, our P1S printers have a 250mm × 250mm × 250mm build volume, while the H2S extends to 340mm in one dimension.
+
+**Extruder** is the mechanism that grips the filament and pushes it toward the hotend. "Direct drive" means the motor is mounted right on the printhead; "Bowden" means the motor is mounted on the frame and pushes filament through a tube. Direct drive handles flexible materials better.
+
+## Slicer Settings
+
+A **slicer** is the software that converts your 3D model into instructions the printer understands. It "slices" your model into layers and generates G-code—the step-by-step commands that tell the printer exactly where to move and how much plastic to extrude.
+
+### Layer Height
+
+How thick each horizontal slice of your print is. This is one of the most important settings because it directly affects print quality and time.
+
+- **0.1mm (fine):** Maximum detail, smoothest surfaces, but takes roughly twice as long as 0.2mm
+- **0.2mm (standard):** Good balance of quality and speed—this is where most prints land
+- **0.28-0.32mm (draft):** Faster prints, visible layer lines, fine for prototypes or hidden parts
+
+The rule of thumb: layer height shouldn't exceed about 80% of your nozzle diameter. With a standard 0.4mm nozzle, that means 0.32mm is roughly the upper limit.
+
+### Infill
+
+The internal structure of your print. Instead of printing solid objects (which wastes material and time), printers create a pattern inside the walls.
+
+**Infill percentage** determines how much of the interior is filled with plastic:
+
+- **10-15%:** Good for decorative items that won't bear loads
+- **20-30%:** Standard for most functional parts
+- **40-60%:** Heavy-duty applications, parts under stress
+- **100%:** Completely solid (rarely necessary)
+
+**Infill pattern** is the geometric structure used inside. Gyroid is currently popular because it provides strength in all directions. Grid and honeycomb are simpler but effective. The pattern choice matters more for functional parts than decorative ones.
+
+### Walls and Shells
+
+The outer perimeter of your print is called **walls** or **shells**. More walls mean stronger parts. For most applications, 3-4 walls provide good strength. For decorative items, 2 walls are often enough. Heavy-duty parts might go to 5-6.
+
+Wall thickness contributes more to part strength than infill density in many cases.
+
+## Print Features
+
+### Supports
+
+When your model has overhangs—parts that extend outward without anything beneath them—the printer needs temporary scaffolding. **Supports** are automatically generated structures that prop up these sections during printing, then get removed afterward.
+
+The general rule: overhangs up to 45° from vertical can self-support. Beyond that, you'll need supports. They leave marks where they contact the model, so thoughtful orientation can minimize visible support scars.
+
+### Bridging
+
+When the printer needs to span a gap between two points—like printing the top of a doorway—it's called **bridging**. The printer extrudes in midair, relying on the material to cool and solidify fast enough to hold its shape.
+
+Short bridges work great. Long bridges may sag. Cooling and speed adjustments help, but some designs simply need supports for long spans.
+
+### Brim and Raft
+
+Adhesion helpers for tricky prints:
+
+- **Brim:** A single-layer "collar" around the base of your print that increases bed contact. Easy to remove, minimal material use.
+- **Raft:** A full multi-layer platform under your print. Uses more material but provides maximum adhesion for problematic models.
+
+**Skirt** is different—it's a few loops around (not touching) your print that primes the nozzle before the real printing starts.
+
+## Common Issues You'll Hear About
+
+**Warping** happens when corners lift off the build plate as the print cools. Some materials (ABS especially) are prone to this. Heated beds, enclosures, and brims help prevent it.
+
+**Stringing** refers to thin wisps of plastic stretched between parts of a print, like cobwebs. It's caused by material oozing from the nozzle during travel moves. Properly tuned **retraction** settings—which pull filament back when the nozzle moves—minimize stringing.
+
+**Layer adhesion** (or lack thereof) determines whether your layers bond together into a solid part or separate under stress. Temperature, speed, and material all affect adhesion. Poor adhesion leads to **delamination**—layers separating from each other.
+
+**Elephant's foot** is when the first layer squishes out wider than it should, creating a slight bulge at the base. Usually a sign that the nozzle is too close to the bed or first layer temperature is too high.
+
+## File Formats
+
+**STL (STereoLithography):** The industry standard. Contains only geometry—no color, no material info, just the shape. Works everywhere.
+
+**3MF:** The newer, better format. Includes geometry plus color, material, and other metadata. Use it if your software supports it.
+
+**OBJ:** Common in 3D graphics. Supports textures and colors. Works for printing but STL or 3MF are usually better choices.
+
+**STEP/STP:** Native CAD format that preserves design intent. Great for editing but needs to be converted to mesh format before printing.
+
+## Terms Worth Knowing When Ordering
+
+**Print orientation** is which direction your model faces on the build plate. This affects strength (layers are weakest across their bond lines), surface quality, and support needs. A good print service will orient your model optimally.
+
+**Tolerance** refers to dimensional accuracy—how close the final print is to your design dimensions. FDM printing typically achieves ±0.2mm on a well-tuned machine.
+
+**Post-processing** covers anything done after printing: removing supports, sanding layer lines, painting, assembly. Some prints come off the bed ready to use; others need cleanup.
+
+## Why This Matters
+
+Understanding these terms helps you communicate with your print service, make informed decisions about materials and settings, and set realistic expectations for your projects.
+
+When you order from Mandarin3D, you don't need to specify all these settings—I'll handle that based on your needs. But knowing the vocabulary means we can have a real conversation about what you're trying to achieve and how to get there.
+
+Got a project in mind? [Upload your file](/upload) and let's talk about the best way to bring it to life. Not sure if your design is print-ready? Reach out—design feedback is part of the service.
