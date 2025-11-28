@@ -10,7 +10,7 @@
 - [x] **Understanding 3D File Formats: STL vs OBJ vs 3MF**
 - [ ] **How to Prepare Your 3D Model for Printing (The Right Way)**
 - [x] **Common 3D Printing Terms Every Beginner Should Know**
-- [ ] **What to Expect When You Order a Custom 3D Print**
+- [x] **What to Expect When You Order a Custom 3D Print**
 - [ ] **How to Measure Your Model for Perfect Fit Every Time**
 - [ ] **The Anatomy of a 3D Print: Layers, Infill, and Shells Explained**
 - [ ] **Choosing the Right Print Orientation for Your Model**
@@ -201,6 +201,7 @@
 
 - [ ] **How to Optimize Your STL File for Faster Upload and Processing**
 - [ ] **Understanding Print Time Estimates: Why They Vary and What Affects Them**
+- [ ] **Functional Threads and Fasteners: When to Print vs When to Use Hardware Inserts**
 
 ---
 
