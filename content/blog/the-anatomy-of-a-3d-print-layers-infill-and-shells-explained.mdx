@@ -1,0 +1,206 @@
+---
+title: "The Anatomy of a 3D Print: Layers, Infill, and Shells Explained"
+description: "Understand the hidden structure inside your 3D prints. Learn how layers, infill patterns, and shells work together to create strong, lightweight parts—and why these settings matter for your project."
+date: "2025-11-29"
+author: "Mandarin3D"
+tags: ["beginners", "guide", "infill", "layers", "3d-printing-basics"]
+category: "guides"
+---
+
+When you look at a finished 3D print, you see a solid object. But slice it open and you'll discover something more interesting—a carefully engineered internal structure that balances strength, weight, and print time. Understanding this hidden anatomy helps you make better decisions about your prints and communicate more effectively with your print service.
+
+## The Four Building Blocks
+
+Every FDM (Fused Deposition Modeling) print consists of four distinct structural elements:
+
+1. **Shells** (also called walls or perimeters)
+2. **Top layers**
+3. **Bottom layers**
+4. **Infill**
+
+Think of it like a building: shells are the exterior walls, top and bottom layers are the roof and foundation, and infill is the internal framework that holds everything together. Each serves a specific purpose, and adjusting any one of them changes the print's characteristics.
+
+## Layers: The Foundation of Everything
+
+FDM printing works by depositing melted plastic one horizontal layer at a time. Each layer fuses to the one below it, building the object from bottom to top. The thickness of these layers—called layer height—is one of the most important settings in 3D printing.
+
+### Layer Height Explained
+
+Layer height typically ranges from 0.08mm (very fine) to 0.32mm (coarse) for standard 0.4mm nozzles. Here's what each end of that spectrum means for your print:
+
+**Fine layers (0.12mm or less):**
+- Smoother surface finish with less visible layer lines
+- Better detail reproduction on curves and angles
+- Significantly longer print times—often 2-3x longer
+- Best for display pieces, miniatures, and detailed work
+
+**Standard layers (0.2mm):**
+- Good balance between quality and speed
+- Layer lines visible but not distracting
+- Works well for most functional parts
+- The default choice for general-purpose printing
+
+**Coarse layers (0.28mm+):**
+- Fast printing with very visible layer lines
+- Good for prototypes and parts where appearance doesn't matter
+- Slightly reduced strength in some orientations
+- Useful when you need something quickly
+
+At Mandarin3D, we default to 0.2mm layers for functional parts and 0.12mm for display pieces. But if you have specific needs—like a rapid prototype or a showpiece miniature—just let us know.
+
+### Why Layer Lines Matter
+
+Those horizontal lines you see on 3D prints aren't defects—they're the nature of the process. Each line represents where one layer ends and the next begins. Lighter colors show them more prominently; darker colors hide them better.
+
+Layer orientation also affects strength. A part is strongest along its layers (horizontal stress) and weakest perpendicular to them (vertical stress). This is why print orientation matters so much for functional parts.
+
+## Shells: The Outer Walls
+
+Shells are the vertical outer surfaces of your print. When you slice a model, the slicer generates these outlines first, then fills in the rest. More shells mean thicker walls, which directly impacts strength and durability.
+
+### How Shell Count Works
+
+A standard 0.4mm nozzle produces shells roughly 0.45mm wide. So:
+
+- **2 shells** = approximately 0.9mm wall thickness
+- **3 shells** = approximately 1.35mm wall thickness
+- **4 shells** = approximately 1.8mm wall thickness
+
+For most prints, 2-3 shells provide adequate strength. Increasing to 4+ shells makes sense when:
+
+- The part will bear loads or handle stress
+- You plan to sand or finish the surface (finishing removes material)
+- You're installing hardware like screws or inserts
+- The design has thin features that need reinforcement
+
+### The Shell vs. Infill Trade-off
+
+Here's something many people don't realize: adding more shells is often more effective for strength than increasing infill density. Those outer walls carry most of the load in typical parts. Research consistently shows that wall count has a bigger impact on tensile strength than infill percentage.
+
+This matters for your wallet too. More shells uses material efficiently along the part's surfaces, while high infill fills the entire interior—often unnecessarily.
+
+## Infill: The Internal Framework
+
+Cut a 3D print in half and you'll see the infill—an internal lattice structure that supports the top layers and provides structural integrity without making the part solid. Printing fully dense parts wastes material, time, and adds unnecessary weight.
+
+### Infill Density
+
+Infill density is expressed as a percentage:
+
+**0-15% (Low density)**
+- Nearly hollow with minimal internal structure
+- Very fast to print, uses minimal material
+- Suitable for decorative items and display models
+- Not recommended for functional parts
+
+**20-40% (Medium density)**
+- Good balance of strength and efficiency
+- Works for most household items and general-purpose parts
+- The sweet spot for the majority of prints
+- 20% is often the default setting
+
+**50-75% (High density)**
+- Significantly stronger internal structure
+- Longer print times and more material usage
+- Necessary for parts under stress or bearing loads
+- Good for mechanical components
+
+**100% (Solid)**
+- Completely filled with no internal gaps
+- Maximum strength and weight
+- Very long print times
+- Only needed for small parts or extreme durability requirements
+
+For most projects, 20-30% infill is plenty. Higher isn't automatically better—it just uses more material and takes longer.
+
+### Infill Patterns: Choosing the Right Structure
+
+Not all infill is created equal. Different patterns have different strengths:
+
+**Grid (or Lines)**
+Perpendicular lines forming squares. Fast to print, provides balanced strength in X and Y directions. A solid all-purpose choice.
+
+**Triangular**
+Forms triangles throughout the interior. Considered one of the strongest patterns because triangles resist deformation well. Great for structural parts while still printing quickly.
+
+**Honeycomb (Hexagonal)**
+The classic honeycomb structure offers excellent strength-to-weight ratio. Takes slightly longer to print than grid but uses material efficiently.
+
+**Gyroid**
+Curved, wavy patterns that provide nearly equal strength in all directions (isotropic). Excellent for parts that experience multi-directional stress or flexible materials. Takes longer to print but performs exceptionally well.
+
+**Cubic**
+Three-dimensional cubes tilted at an angle. Very strong pattern that resists compression well.
+
+**Lightning**
+Minimal supports only where needed—basically a hollow print with strategic reinforcement. The fastest pattern, but only suitable for display models.
+
+### Which Pattern Should You Choose?
+
+For most functional prints, **triangular** or **grid** at 20-30% density hits the sweet spot. Need maximum strength? Go with **gyroid** or **cubic** at higher densities. Printing display models? **Lightning** or **lines** at 10-15% saves time and material.
+
+At Mandarin3D, we use grid or gyroid for most prints—they're reliable and well-tested on our BambuLab printers.
+
+## Top and Bottom Layers: Sealing It Up
+
+The top and bottom of your print use solid layers instead of infill patterns. These create smooth, closed surfaces and provide a foundation for the internal structure.
+
+### How Many Solid Layers?
+
+The standard recommendation is enough solid layers to equal at least 1.2mm thickness:
+
+- At 0.2mm layer height: 6 top/bottom layers
+- At 0.12mm layer height: 10 top/bottom layers
+- At 0.28mm layer height: 4-5 top/bottom layers
+
+Too few top layers cause "pillowing"—where the infill pattern shows through the top surface. Too few bottom layers can result in weak adhesion or visible infill from below.
+
+### Bottom Layer Considerations
+
+The bottom layer sits against the print bed and comes out smooth and flat (or textured, depending on the bed surface). If the first layer has any issues, having multiple bottom layers provides insurance that the structure remains sound.
+
+## Putting It All Together: Real-World Examples
+
+Let's look at how these settings combine for different use cases:
+
+### Decorative Figurine
+- **Layers:** 0.12mm for smooth surfaces
+- **Shells:** 2-3 (appearance matters, not strength)
+- **Infill:** 10-15% lightning or grid (just enough to support top surfaces)
+- **Result:** Detailed, lightweight, quick to print
+
+### Functional Bracket or Mount
+- **Layers:** 0.2mm (good strength characteristics)
+- **Shells:** 4 (handle stress and potential hardware)
+- **Infill:** 30-40% triangular or gyroid (structural load bearing)
+- **Result:** Strong, durable, reasonable print time
+
+### Prototype for Fit Testing
+- **Layers:** 0.28mm (speed over appearance)
+- **Shells:** 2 (minimum viable)
+- **Infill:** 15-20% grid (fast pattern)
+- **Result:** Quick turnaround for iteration
+
+### Mechanical Part Under Stress
+- **Layers:** 0.2mm
+- **Shells:** 5+ (maximum wall strength)
+- **Infill:** 50-70% gyroid (multi-directional strength)
+- **Result:** Very strong, longer print time justified by durability
+
+## What This Means for Your Order
+
+When you upload a file to Mandarin3D, we handle all these settings based on your intended use. Here's how to help us get it right:
+
+**Tell us what the part does.** "This is a decorative piece" gets different settings than "this holds a motor in place."
+
+**Mention any specific requirements.** Need it to survive outdoor use? Planning to paint it? Installing screws? These details shape our choices.
+
+**Ask if you're curious.** We're happy to explain what settings we're using and why. Understanding the anatomy of your print helps you design better parts in the future.
+
+## Ready to Print?
+
+Now you know what's happening inside that seemingly solid object. Layers stack up, shells form the exterior, infill creates the internal skeleton, and solid layers seal it all together. Each element can be tuned for your specific needs.
+
+Have a project in mind? [Upload your file](/upload) and tell us what you're making. We'll optimize the internal structure to match your requirements—strength, appearance, budget, whatever matters most to you.
+
+Questions about settings for a specific application? Reach out at [orders@mandarin3d.com](mailto:orders@mandarin3d.com). Understanding this stuff is part of what makes working with a local print service worthwhile.

@@ -12,7 +12,7 @@
 - [x] **Common 3D Printing Terms Every Beginner Should Know**
 - [x] **What to Expect When You Order a Custom 3D Print**
 - [x] **How to Measure Your Model for Perfect Fit Every Time**
-- [ ] **The Anatomy of a 3D Print: Layers, Infill, and Shells Explained**
+- [x] **The Anatomy of a 3D Print: Layers, Infill, and Shells Explained**
 - [ ] **Choosing the Right Print Orientation for Your Model**
 - [ ] **Why Your 3D Model Might Need Modifications Before Printing**
 - [ ] **A Guide to 3D Print Resolution: What Layer Height Should You Choose?**
@@ -203,6 +203,7 @@
 - [ ] **Understanding Print Time Estimates: Why They Vary and What Affects Them**
 - [ ] **Functional Threads and Fasteners: When to Print vs When to Use Hardware Inserts**
 - [ ] **How to Design 3D Printed Jigs and Fixtures for Home Workshop Projects**
+- [ ] **Bridge Settings Explained: Printing Horizontal Spans Without Supports**
 
 ---
 
