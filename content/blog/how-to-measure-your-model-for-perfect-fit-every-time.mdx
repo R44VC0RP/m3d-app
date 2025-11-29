@@ -1,0 +1,184 @@
+---
+title: "How to Measure Your Model for Perfect Fit Every Time"
+description: "Learn the measuring techniques that guarantee your 3D printed parts fit perfectly. From digital calipers to tolerance compensation, get it right the first time."
+date: "2025-11-29"
+author: "Mandarin3D"
+tags: ["measuring", "tolerances", "design-tips", "getting-started", "calipers"]
+category: "guides"
+---
+
+The most common reason 3D prints don't fit? Bad measurements. I've seen perfectly designed parts fail because someone measured with a ruler instead of calipers, eyeballed a dimension, or forgot that 3D printing has tolerances. Here's how to measure correctly and account for the realities of FDM printing.
+
+## Why Accurate Measurements Matter
+
+When you're designing a replacement part, a bracket that mounts to existing hardware, or anything that needs to mate with another object, being off by even half a millimeter can mean the difference between a perfect fit and a useless print.
+
+3D printing isn't injection molding. Every printed part has some dimensional variation—typically ±0.2mm for well-calibrated FDM printers like our BambuLab P1S. That's incredibly precise for desktop manufacturing, but it means you need to design with tolerances in mind.
+
+## The Essential Tool: Digital Calipers
+
+If you're going to measure anything for 3D printing, get a pair of digital calipers. They're the single best investment you can make for getting fits right. A decent pair costs $15-30 and will last years.
+
+### Why Calipers Beat Everything Else
+
+- **Rulers**: Best case, you're measuring to 0.5mm. That's not close to enough.
+- **Tape measures**: Same problem, plus they flex and move.
+- **Your eyes**: Don't even try to eyeball dimensions for parts that need to fit.
+
+Digital calipers measure to 0.01mm accuracy. More importantly, they have three measurement modes that cover every situation you'll encounter.
+
+### The Three Ways to Measure
+
+**Outside jaws** measure external dimensions—the width of a bolt head, the diameter of a dowel, the thickness of a phone. Open the large jaws, place them around the object, and gently close until they make firm contact.
+
+**Inside jaws** measure internal dimensions—the diameter of a hole, the width of a slot, the inside of a tube. Close the small jaws, insert them into the opening, and expand until they contact both sides.
+
+**Depth rod** measures depths—how deep a pocket goes, the length of a blind hole, the depth of a recess. Press the end of the caliper flat against the surface and extend the rod until it bottoms out.
+
+### Getting Accurate Readings
+
+A few techniques make the difference between good measurements and garbage:
+
+**Zero before every session.** Close the jaws completely, press the zero button. If your calipers read anything other than 0.00 when closed, your measurements will all be off by that amount.
+
+**Keep everything clean.** Dust and debris between the jaws and your object will throw off readings. Wipe both the caliper jaws and the object you're measuring.
+
+**Don't overtighten.** When the jaws make contact, stop. Squeezing harder won't give you a more accurate measurement—it'll just deform soft materials and potentially damage your calipers.
+
+**Measure multiple times.** Take three measurements and use the average. If the readings vary significantly, something's wrong—either your technique or the object itself is inconsistent.
+
+**Measure at multiple points.** Real-world objects aren't perfect. A hole might be slightly oval, a shaft might taper. Check multiple locations to understand the true dimensions.
+
+## Understanding 3D Printing Tolerances
+
+Here's the reality: if you design a 10mm peg to fit into a 10mm hole, it won't fit. The peg will print slightly oversize and the hole will print slightly undersize. That's just physics.
+
+### Why This Happens
+
+When molten plastic is deposited, it has some flow and spread. The outer perimeters of your print end up slightly larger than designed. For holes, this means the inner perimeter pushes inward, making holes smaller than modeled.
+
+The typical dimensional accuracy for a well-tuned FDM printer:
+
+- **External dimensions**: Within ±0.2mm of designed size
+- **Holes and internal features**: Often 0.1-0.3mm undersized
+- **First layer**: Can be slightly "elephant foot" (wider at the base)
+
+### Designing for Fit
+
+The golden rule: **add clearance to your design based on the type of fit you need.**
+
+**Tight fit (press fit)**: Add 0.1-0.15mm clearance. The parts will require force to assemble and will stay put without fasteners. Good for permanent assemblies.
+
+**Snug fit (firm sliding)**: Add 0.2mm clearance. Parts slide together with slight resistance. Good for caps, covers, and parts you want to stay in place but be removable.
+
+**Loose fit (easy sliding)**: Add 0.3-0.4mm clearance. Parts move freely with no resistance. Good for hinges, moving parts, and anything that needs to rotate or slide smoothly.
+
+**Very loose fit**: Add 0.5mm+ clearance. For parts that need to assemble easily without any fitting, or when precision isn't critical.
+
+### A Practical Example
+
+Say you're designing a case that needs to fit around a device that measures 75.4mm × 142.8mm × 8.2mm.
+
+For a snug fit that's easy to insert but won't rattle:
+
+- **Internal width**: 75.4 + 0.4 (0.2mm per side) = 75.8mm
+- **Internal length**: 142.8 + 0.4 = 143.2mm
+- **Internal depth**: 8.2 + 0.4 = 8.6mm
+
+This gives you 0.2mm clearance on each side—enough to account for print variation while keeping a nice, snug fit.
+
+## Measuring Complex Objects
+
+Not everything is a simple box or cylinder. Here's how to approach tricky measurements.
+
+### Curved Surfaces
+
+For curved parts, take measurements at multiple points along the curve. If you're trying to create a mount that wraps around a curved surface (like a pipe or handlebar), measure:
+
+- The diameter at several points (curves aren't always consistent)
+- The length of the section you need to grip
+- Any features like ridges or tapers
+
+### Existing Parts You're Replacing
+
+When measuring a broken part to recreate it:
+
+1. Measure what remains intact first
+2. For broken areas, look for symmetry—if one side is intact, measure it and mirror
+3. Check the mating parts for clues about dimensions
+4. When in doubt, err slightly larger for holes and slightly smaller for pegs
+
+### Bolt Holes and Hardware
+
+Standard hardware has standard dimensions. If you know it's an M5 bolt, the hole should be 5.3-5.5mm for clearance. For threaded holes that receive machine screws, you'll often want to print undersized and tap threads, or use heat-set inserts.
+
+Common clearance hole sizes for metric bolts:
+- M3: 3.4mm hole
+- M4: 4.5mm hole
+- M5: 5.5mm hole
+- M6: 6.6mm hole
+
+## The Test Print Method
+
+For critical fits, don't gamble on your first full print. Create a small test piece that includes just the critical features.
+
+### What to Test
+
+- Hole sizes where bolts or pins will pass through
+- Peg-and-socket connections between multiple parts
+- Snap-fit features
+- Any dimension where fit is critical
+
+### How to Test
+
+1. Design a small test piece (maybe 20mm × 20mm) with the critical feature
+2. Print it with the same settings you'll use for the full part
+3. Test the fit with actual mating parts
+4. Adjust your design based on results
+5. Retest if needed
+
+A 15-minute test print that saves you from reprinting a 6-hour part is always worth it.
+
+## Real-World Fit Scenarios
+
+### Replacement Parts
+
+Measure the original part if you have it. If it's broken, measure what's left and fill in the gaps logically. Measure the thing it attaches to as well—that's often more reliable than a damaged part.
+
+### Cases and Enclosures
+
+Measure the object going inside, add appropriate clearance, then add your wall thickness on top of that. Don't forget about connectors, buttons, or features that need access cutouts.
+
+### Multi-Part Assemblies
+
+For parts that connect to each other, design one part first, then reference its actual dimensions when designing the mating part. Or even better—print part one, measure the printed result, then adjust part two to match reality rather than the design file.
+
+### Parts That Mount to Existing Objects
+
+Measure the mounting surface. Is it flat? Is there a lip or edge you need to account for? Where are the mounting holes, and what hardware goes in them?
+
+## When Measurements Go Wrong
+
+Even with careful measuring, fits sometimes don't work out. Here's how to recover:
+
+**Part too tight?** For small adjustments, sand or file the surface. For holes that are too small, use a drill bit. For systematic issues, adjust your design and reprint.
+
+**Part too loose?** Sometimes you can add tape or a shim as a quick fix. For a better solution, measure what you actually printed (not what you designed) and adjust your clearances accordingly.
+
+**Inconsistent results?** If the same file prints differently each time, there may be a printer calibration issue. At Mandarin3D, our machines are regularly calibrated, but if you're printing at home, check your belt tension, e-steps, and flow rate.
+
+## The Measurement Checklist
+
+Before finalizing any design that needs to fit something:
+
+1. **Measured with calipers?** Not a ruler, not your eyes—calipers.
+2. **Multiple measurements taken?** At least 3, and at different points if relevant.
+3. **Clearance added?** 0.2mm per side for snug fits, 0.3-0.4mm for sliding.
+4. **Units double-checked?** Make sure you're in millimeters throughout.
+5. **Test print considered?** For critical fits, test before committing to the full print.
+
+## Need Help Getting the Fit Right?
+
+If you're not sure whether your measurements and clearances are correct, that's exactly what the Print Assistance option is for. Upload your file, mention what it needs to fit with, and I'll review the dimensions before printing.
+
+Got a project with tricky fit requirements? [Upload your file](/upload) and let me know what it needs to mate with. Better to sort out the dimensions before printing than to discover the problem afterward.
