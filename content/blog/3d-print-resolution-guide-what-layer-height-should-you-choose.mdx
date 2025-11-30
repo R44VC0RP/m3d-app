@@ -1,0 +1,152 @@
+---
+title: "3D Print Resolution Guide: What Layer Height Should You Choose?"
+description: "Layer height is the single setting that most affects how your 3D print looks, how long it takes, and even how strong it is. Here's how to choose the right resolution for your project."
+date: "2025-11-30"
+author: "Mandarin3D"
+tags: ["beginners", "guide", "layer-height", "resolution", "quality", "3d-printing-basics"]
+category: "guides"
+---
+
+If there's one setting that defines your 3D print more than any other, it's layer height. This single number determines whether your print takes 2 hours or 8, whether surfaces look smooth or show obvious stepping, and—surprisingly to many—whether your part is stronger or weaker.
+
+Layer height is to 3D printing what resolution is to photography. A 4K image shows crisp detail; a low-resolution image looks pixelated. But unlike photos, where higher resolution is always better, 3D printing involves real trade-offs. Sometimes "lower quality" is actually the smarter choice.
+
+## What Layer Height Actually Means
+
+FDM (Fused Deposition Modeling) printers build objects by depositing melted plastic one horizontal layer at a time, stacking upward. Layer height is simply how thick each of those layers is—the vertical distance the print head moves up between passes.
+
+Standard layer heights for most printers range from 0.08mm (ultra-fine) to 0.32mm (draft quality). To put that in perspective, a human hair is about 0.07mm thick. So even "coarse" 3D printing layers are only a few hair-widths tall.
+
+The printer I use—BambuLab machines with 0.4mm nozzles—can print anywhere in that range. The question isn't what's possible; it's what's right for your specific project.
+
+## The Core Trade-off: Quality vs. Time
+
+Here's the fundamental math: halving your layer height doubles your print time.
+
+A model that's 50mm tall requires 250 layers at 0.2mm layer height. Drop to 0.1mm, and you need 500 layers—twice as many passes, twice as much time. Go coarser to 0.3mm, and you only need about 167 layers.
+
+Real-world example: A decorative figure that takes 4 hours at 0.2mm would take roughly 8 hours at 0.1mm and about 2.5 hours at 0.3mm. Same model, dramatically different time investment.
+
+But here's what surprises people: the visual difference between 0.1mm and 0.2mm is often subtle, especially on curved surfaces. Going from 0.2mm to 0.3mm, though, starts becoming noticeable. There's a sweet spot where you're not gaining much quality for all that extra time.
+
+## Common Layer Heights and When to Use Them
+
+### 0.08mm - 0.12mm: Ultra-Fine Detail
+
+This is where you go when detail matters more than anything else. Miniatures for tabletop gaming, jewelry masters, highly detailed figurines, or anything where you want the layer lines to effectively disappear.
+
+**Best for:**
+- Tabletop miniatures (28mm scale figures)
+- Display pieces with fine surface features
+- Small parts with intricate text or patterns
+- Models that will be photographed up close
+
+**The catch:** Print times increase dramatically. A small figurine that takes 2 hours at 0.2mm might take 5-6 hours at 0.08mm. Only use this when the detail genuinely matters.
+
+### 0.15mm - 0.2mm: The Sweet Spot
+
+For most prints, 0.2mm hits the optimal balance. It's the most commonly used layer height across the 3D printing community for good reason—it produces clean results in reasonable time.
+
+At 0.2mm, layer lines are visible if you look closely, but they're not distracting. The surface quality is good enough for functional parts, display pieces, and everything in between.
+
+**Best for:**
+- General-purpose printing
+- Functional parts and brackets
+- Prototypes where appearance matters
+- Anything that doesn't demand extreme detail or extreme speed
+
+When customers don't specify a preference, 0.2mm is typically what we use at Mandarin3D. It reliably produces results people are happy with.
+
+### 0.24mm - 0.32mm: Speed Priority
+
+Need parts fast? Draft printing at higher layer heights can cut your wait time significantly. The layers become more visible, but for many applications, that's perfectly acceptable.
+
+**Best for:**
+- Rapid prototypes where you're testing fit, not appearance
+- Hidden or structural components
+- Parts that will be sanded, filled, or painted
+- Large models where fine layers would take forever
+- Functional parts where appearance doesn't matter
+
+Many functional prints—cable clips, wall mounts, organizer bins—work great at 0.28mm. You'll see the layers, but who cares? The part does its job.
+
+## The Strength Question
+
+Here's where things get interesting. Conventional wisdom says thinner layers make stronger parts because there's better fusion between layers. But actual testing shows the opposite.
+
+Parts printed at 0.2mm-0.3mm layer heights consistently test stronger than parts printed at 0.1mm. The difference can be significant—studies show 20% or more strength improvement with thicker layers.
+
+Why? Thicker layers mean more thermal mass per pass. Each layer stays hot longer, allowing better bonding with the layer below. Thin layers cool quickly, creating weaker inter-layer adhesion.
+
+**The practical takeaway:** If you're printing functional parts that need to handle stress—brackets, mounts, clips, mechanical components—don't automatically reach for the finest layer height. A 0.2mm or even 0.28mm layer height often produces a stronger part.
+
+## Material Considerations
+
+Different materials behave differently across layer heights:
+
+**PLA** is forgiving across the board. It prints well from 0.08mm to 0.32mm without major adjustments. Great for beginners and versatile for any application.
+
+**PETG** actually prefers slightly thicker layers—0.2mm and up. Thinner layers can exacerbate stringing and surface quality issues that PETG is prone to. If you're printing PETG for function rather than appearance, 0.24mm is often the sweet spot.
+
+Both materials work reliably across our standard layer height options. When you order, we'll match the layer height to your application unless you specify otherwise.
+
+## The Nozzle Size Connection
+
+Layer height isn't independent of your nozzle diameter. There's a rule of thumb: keep layer height between 25% and 75% of your nozzle diameter.
+
+For the standard 0.4mm nozzle, that means layer heights between 0.1mm and 0.3mm. Go too thin, and you risk under-extrusion. Go too thick, and layers won't bond properly.
+
+Our BambuLab P1S and H2S printers run 0.4mm nozzles, so we work comfortably within that 0.1mm-0.28mm range for most prints. Need finer detail? A 0.2mm nozzle can go down to 0.05mm layers. Need faster output on large parts? A 0.6mm nozzle handles 0.4mm layers.
+
+## Adaptive Layer Height: Best of Both Worlds
+
+Modern slicing software offers a clever trick: variable layer height within a single print.
+
+Imagine a model with a detailed face but a simple base. Adaptive layer height uses fine 0.12mm layers for the detailed face and coarser 0.24mm layers for the base. You get the detail where it matters and speed where it doesn't.
+
+This is especially useful for models with both curved surfaces (where layer lines are visible) and flat areas (where layer height is invisible). Why spend time on fine layers in places where no one will see the difference?
+
+When slicing customer files, we evaluate whether adaptive layers make sense. It doesn't work for every geometry, but when it does, it's a genuine improvement.
+
+## Practical Decision Framework
+
+When choosing a layer height, ask yourself:
+
+**1. What surfaces matter?**
+If the visible surfaces are primarily vertical, layer lines will show regardless. Invest in fine layers for curved or angled surfaces where the stepping effect appears.
+
+**2. Is this functional or decorative?**
+Functional parts rarely need fine layers. Decorative pieces often benefit from them.
+
+**3. How big is it?**
+A 10mm tall model prints quickly even at 0.08mm. A 150mm tall model at 0.08mm could take days. Scale your expectations to the part size.
+
+**4. Will it be post-processed?**
+If you're planning to sand, fill, and paint the part, coarse layers are fine—you're removing them anyway. Save the fine layers for parts that won't be finished.
+
+**5. What's the deadline?**
+Sometimes "good enough, fast" beats "perfect, eventually." Draft printing has its place.
+
+## What This Means for Your Order
+
+When you submit a file to Mandarin3D, you can specify your layer height preference, or let us choose based on your application.
+
+For most orders where quality and time are both considerations, we default to 0.2mm. It's the reliable middle ground that works for almost everything.
+
+If you're printing miniatures, fine-detail pieces, or anything where surface smoothness is critical, mention it in your order notes. We'll adjust to finer layers where it makes sense.
+
+If you need parts fast and don't care about cosmetics—prototypes, functional brackets, hidden components—let us know. We'll bump up the layer height and get your parts to you quicker.
+
+![Detailed 3D printed tower with fine surface features](/customerShowcase/tower.jpeg)
+
+Complex prints like this tower showcase what's possible when layer height and other settings are dialed in properly. The right resolution choice depends on where detail matters most.
+
+## The Bottom Line
+
+Layer height is a lever you can pull to optimize for what you actually need. There's no universally "best" setting—just the right setting for your specific project.
+
+Need pristine surfaces on a display piece? Go fine. Need strong functional parts quickly? Go coarse. Need a balanced result without overthinking it? 0.2mm works great.
+
+Ready to print? [Upload your file](/upload) and let us know what matters most for your project. We'll handle the settings to match your priorities.
+
+Questions about what layer height makes sense for your application? Reach out at [orders@mandarin3d.com](mailto:orders@mandarin3d.com). We're happy to explain the trade-offs and recommend the right approach.
