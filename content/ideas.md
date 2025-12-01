@@ -22,7 +22,7 @@
 ## Materials Deep Dives
 
 - [ ] **PLA vs PETG: Which Material Should You Choose?** ✓ (already written)
-- [ ] **The Complete Guide to PLA: Properties, Uses, and Best Practices**
+- [x] **The Complete Guide to PLA: Properties, Uses, and Best Practices**
 - [ ] **PETG Explained: When and Why to Use This Versatile Material**
 - [ ] **Understanding ABS: High-Temp Applications and Considerations**
 - [ ] **TPU Flexible Filament: Perfect for Gaskets, Grips, and More**
@@ -210,6 +210,7 @@
 ---
 
 - [ ] **How to Create Custom 3D Printed QR Code Signs and Tags**
+- [ ] **When to Split Your 3D Model Into Multiple Parts: Assembly Strategies for Large and Complex Prints**
 
 ---
 
