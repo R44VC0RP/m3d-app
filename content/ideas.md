@@ -14,7 +14,7 @@
 - [x] **How to Measure Your Model for Perfect Fit Every Time**
 - [x] **The Anatomy of a 3D Print: Layers, Infill, and Shells Explained**
 - [x] **Choosing the Right Print Orientation for Your Model**
-- [ ] **Why Your 3D Model Might Need Modifications Before Printing**
+- [x] **Why Your 3D Model Might Need Modifications Before Printing**
 - [x] **A Guide to 3D Print Resolution: What Layer Height Should You Choose?**
 
 ---
@@ -209,5 +209,9 @@
 
 ---
 
-*Last updated: November 2025*
+- [ ] **How to Create Custom 3D Printed QR Code Signs and Tags**
+
+---
+
+*Last updated: December 2025*
 
