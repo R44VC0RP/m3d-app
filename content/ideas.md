@@ -36,7 +36,7 @@
 
 ## Design Tips & Best Practices
 
-- [ ] **Designing for 3D Printing: Essential Rules for Success**
+- [x] **Designing for 3D Printing: Essential Rules for Success**
 - [ ] **Wall Thickness Guide: Minimum and Optimal Measurements**
 - [ ] **How to Design Parts That Snap-Fit Together**
 - [ ] **Adding Threads to Your 3D Printed Parts**
@@ -213,6 +213,7 @@
 - [ ] **When to Split Your 3D Model Into Multiple Parts: Assembly Strategies for Large and Complex Prints**
 - [ ] **Understanding Print Bed Surfaces: PEI, Glass, and BuildTak Compared**
 - [ ] **Annealing 3D Prints: How Heat Treatment Can Strengthen Your Parts**
+- [ ] **Embedding Electronics in 3D Prints: Pause-and-Insert Techniques for Functional Parts**
 
 ---
 
