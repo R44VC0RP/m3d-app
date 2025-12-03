@@ -1,0 +1,185 @@
+---
+title: "Designing for 3D Printing: Essential Rules for Success"
+description: "Master the fundamental design principles that separate successful 3D prints from failed ones. Learn about wall thickness, overhangs, tolerances, and more—practical rules that work every time."
+date: "2025-12-03"
+author: "Mandarin3D"
+tags: ["design", "tips", "beginners", "CAD", "best-practices"]
+category: "guides"
+---
+
+Designing for 3D printing isn't the same as designing for other manufacturing methods. What works for injection molding or CNC machining can completely fail when printed layer by layer. The good news? Once you learn the rules, they become second nature—and your prints will succeed far more often.
+
+Here's everything you need to know to design parts that print well on the first try.
+
+## The 45-Degree Rule: Understanding Overhangs
+
+This is the single most important concept in 3D printing design. Since FDM printers build layer by layer from the bottom up, each new layer needs something underneath to support it. When a feature angles outward more than about 45 degrees from vertical, there's not enough material below to properly support it.
+
+**What happens when you ignore this rule:**
+- Drooping or sagging on unsupported surfaces
+- Rough, bumpy textures where the plastic had nothing to land on
+- Complete print failures where material falls away
+
+**How to design around it:**
+- Keep overhangs at 45 degrees or less whenever possible
+- Add chamfers instead of hard 90-degree edges on bottom surfaces
+- Consider splitting the model into multiple parts that can each print flat
+- Accept that support material will be needed (and plan for the surface marks it leaves)
+
+For example, if you're designing a hook that curves outward, orient it so the curve faces up during printing—gravity becomes your friend instead of your enemy.
+
+## Wall Thickness: The Foundation of Printable Parts
+
+Thin walls are the #1 cause of print failures. When walls get too thin, the printer can't create them reliably—or if it does, they'll be fragile enough to break from the slightest stress.
+
+**Minimum wall thickness rules:**
+
+| Feature Type | Minimum | Recommended |
+|-------------|---------|-------------|
+| General walls | 0.8mm | 1.2mm+ |
+| Structural walls | 1.2mm | 2.0mm+ |
+| Protruding pins/pegs | 2.0mm | 3.0mm+ |
+| Thin vertical features | 1.0mm | 1.5mm+ |
+
+These numbers come from the physical reality of how FDM printing works. A standard 0.4mm nozzle produces extrusion lines about 0.45mm wide, so a wall needs at least two lines (roughly 0.9mm) to form properly. Going thinner means gaps, weak spots, or features that simply don't print.
+
+**Real-world tip:** If you're designing a box or enclosure, 1.2mm walls work fine for lightweight items. But if you're mounting hardware, planning to tap threads, or expecting the part to take any abuse, go to 2mm or thicker.
+
+## Designing Holes That Actually Fit
+
+Here's something that surprises most beginners: holes in 3D prints come out smaller than you design them. A 10mm hole might print as 9.5mm or even 9.2mm. This isn't a defect—it's physics.
+
+**Why holes shrink:**
+When the nozzle prints the circular perimeter of a hole, it presses down to ensure adhesion to the previous layer. This compresses and widens each line, pushing material inward into the hole. The effect is more pronounced on smaller holes.
+
+**Compensation strategies:**
+- Add 0.2-0.4mm to hole diameters (more for tight fits)
+- For precision fits, drill or ream the hole after printing
+- Design clearance holes larger than bolt diameter (M5 bolt = 5.5mm hole minimum)
+- Test and iterate—every printer has slightly different shrinkage
+
+**Better alternatives for tight fits:**
+Instead of circular holes for press-fit applications, consider hexagonal or D-shaped holes. These non-circular shapes hold their dimensions better and provide more consistent mechanical interference.
+
+## Tolerances for Moving Parts and Assemblies
+
+When designing parts that fit together—hinges, sliding mechanisms, snap-fits, or any assembly—you need clearance between mating surfaces. Without it, your parts will fuse together or never fit at all.
+
+**General tolerance guidelines:**
+
+| Fit Type | Clearance | Use Case |
+|----------|-----------|----------|
+| Tight/Press fit | 0.1-0.2mm | Parts that shouldn't move once assembled |
+| Snug fit | 0.2-0.3mm | Parts that should fit together without play |
+| Normal clearance | 0.3-0.4mm | Standard assemblies, removable parts |
+| Loose/Moving | 0.4-0.5mm | Hinges, sliding parts, rotating joints |
+| Very loose | 0.5mm+ | Parts that need to move freely under any conditions |
+
+These are starting points. Environmental factors like humidity and temperature can cause PLA and PETG to expand slightly, so err on the looser side if your part needs to work reliably over time.
+
+**Testing tip:** When designing a new assembly, print a small test piece first. A simple interlocking shape at different tolerances takes minutes to print and saves hours of reprinting full parts.
+
+## Bridging: Spanning the Gap
+
+Bridging is what happens when the printer needs to cross an open span—printing horizontally between two anchor points with nothing but air below. Think of the top of a window opening or the ceiling of an internal cavity.
+
+**What works:**
+- Bridges under 10mm usually work fine with no supports
+- Bridges between 10-20mm may show some sagging but are often acceptable
+- Bridges over 20mm typically need support material or design changes
+
+**Design strategies to avoid bridging problems:**
+- Add a chamfer or slope to transition into horizontal surfaces
+- Break long bridges into shorter spans with intermediate supports designed into the model
+- Consider printing the part in a different orientation
+
+Our BambuLab P1S printers handle bridging quite well, but even the best printer can't overcome physics. If your design requires a 50mm unsupported span, expect compromises in surface quality on the underside.
+
+## Text and Fine Details
+
+Want to add text, logos, or fine details to your print? The rules are different for FDM than you might expect.
+
+**Minimum sizes for readable text:**
+- Embossed (raised) text: 0.5mm depth, 2mm character height minimum
+- Engraved (recessed) text: 0.5mm depth, 2mm character height minimum
+- Very fine detail: 0.3mm is the practical limit for features that will actually show
+
+**Tips for better text:**
+- Bold fonts work better than thin ones—the lines need to be thick enough to print
+- Sans-serif fonts (like Arial or Helvetica) reproduce more reliably than serif fonts
+- Recessed text often looks cleaner than raised text because it doesn't depend on support material
+- Orient text so it prints horizontally, not standing up vertically
+
+For company logos or complex graphics, simplify the design. That intricate script font that looks great on screen might become an unreadable blob at printing scale.
+
+## The Support Question: When to Design Them Out
+
+Support material works, but it's never ideal. It uses extra material, adds print time, leaves surface marks, and requires post-processing. The best support is no support at all.
+
+**Design techniques to minimize supports:**
+- **Chamfers over fillets:** A 45-degree chamfer self-supports; a curved fillet might not
+- **Teardrop holes:** For horizontal holes, make them teardrop-shaped (point up) so the top prints without support
+- **Split models:** Sometimes the easiest solution is cutting the model in half and printing two flat pieces to glue together
+- **Strategic orientation:** Rotate the model to put necessary overhangs at angles that self-support
+
+**When supports are unavoidable:**
+Some designs simply need supports, and that's fine. Just plan for it:
+- Put critical surfaces on the build plate where they'll be smooth
+- Accept that supported surfaces will need cleanup
+- Use support-friendly materials—PETG releases from supports more cleanly than PLA sometimes
+
+## Designing for the Build Volume
+
+At Mandarin3D, our BambuLab P1S printers have a 256 x 256 x 256mm build volume, and our H2S can go up to 340mm in height. That's a lot of space, but it's not infinite.
+
+**When your part is bigger than the printer:**
+- Split the model along natural break lines
+- Design interlocking features (dovetails, pins, puzzle joints) for alignment
+- Add registration marks or pins so parts align perfectly during assembly
+- Leave flat surfaces at the split points for strong glue joints
+
+**Optimizing for the build plate:**
+- Print multiple small parts in one batch when possible
+- Orient elongated parts diagonally to fit larger lengths
+- Consider which surfaces matter most—those should face up or against the bed
+
+## Material-Specific Design Considerations
+
+Different materials have different characteristics, and your design should account for them.
+
+**PLA:**
+- Rigid and dimensionally stable—excellent for precise parts
+- Brittle under impact—avoid thin clips or snap-fits that need to flex repeatedly
+- Heat-sensitive—don't design PLA parts for high-temperature environments
+
+**PETG:**
+- More flexible than PLA—great for snap-fits and living hinges
+- Slightly more shrinkage—account for it in precision assemblies
+- Excellent layer adhesion—strong even with lower infill
+
+**TPU (Flexible):**
+- Design with thicker walls (2mm minimum recommended)
+- Accounts for stretch and compression in your dimensions
+- Don't expect tight tolerances—flexibility makes precision challenging
+
+## A Quick Design Checklist
+
+Before you finalize your model, run through this list:
+
+1. **Walls thick enough?** Nothing under 0.8mm, preferably 1.2mm+
+2. **Overhangs manageable?** Under 45 degrees or supports planned
+3. **Holes compensated?** Added 0.2-0.4mm for shrinkage
+4. **Tolerances specified?** At least 0.3mm clearance for moving parts
+5. **Text readable?** Minimum 2mm height, bold fonts preferred
+6. **Fits the build volume?** 256mm max per side (or 340mm height on H2S)
+7. **File format correct?** STL or 3MF preferred
+
+## Getting Your Design Right
+
+These rules might seem like a lot to remember, but they quickly become intuitive. After a few projects, you'll naturally add chamfers instead of fillets, automatically compensate hole sizes, and think about print orientation from the start.
+
+And if you're unsure? That's exactly why working with a local print service helps. When you [upload your model](/upload) to Mandarin3D, we review it before printing. If something in your design might cause problems—walls too thin, tolerances too tight, orientation that needs adjustment—we'll reach out and work through it with you.
+
+Have a design you're not sure about? Send it over. We'd rather catch issues before printing than waste your time and money on a failed print. That's the advantage of working with people who look at every file, not an automated system that just prints whatever you upload.
+
+Questions about a specific design challenge? Email us at [orders@mandarin3d.com](mailto:orders@mandarin3d.com)—we're always happy to help troubleshoot before you commit to a print.
