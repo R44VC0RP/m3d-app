@@ -24,7 +24,7 @@
 - [ ] **PLA vs PETG: Which Material Should You Choose?** ✓ (already written)
 - [x] **The Complete Guide to PLA: Properties, Uses, and Best Practices**
 - [x] **PETG Explained: When and Why to Use This Versatile Material**
-- [ ] **Understanding ABS: High-Temp Applications and Considerations**
+- [x] **Understanding ABS: High-Temp Applications and Considerations**
 - [x] **TPU Flexible Filament: Perfect for Gaskets, Grips, and More**
 - [ ] **Nylon 3D Printing: Strong Parts for Demanding Applications**
 - [ ] **Wood-Fill, Metal-Fill, and Specialty Filaments Explained**
@@ -215,6 +215,7 @@
 - [ ] **Annealing 3D Prints: How Heat Treatment Can Strengthen Your Parts**
 - [ ] **Embedding Electronics in 3D Prints: Pause-and-Insert Techniques for Functional Parts**
 - [ ] **How to Design Watertight 3D Prints: Sealing Techniques and Material Choices**
+- [ ] **Temperature Tower Calibration: Fine-Tuning Your Filament Settings for Perfect Prints**
 
 ---
 
