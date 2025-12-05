@@ -26,7 +26,7 @@
 - [x] **PETG Explained: When and Why to Use This Versatile Material**
 - [x] **Understanding ABS: High-Temp Applications and Considerations**
 - [x] **TPU Flexible Filament: Perfect for Gaskets, Grips, and More**
-- [ ] **Nylon 3D Printing: Strong Parts for Demanding Applications**
+- [x] **Nylon 3D Printing: Strong Parts for Demanding Applications**
 - [ ] **Wood-Fill, Metal-Fill, and Specialty Filaments Explained**
 - [ ] **How Humidity Affects 3D Printing Filaments (And How to Prevent Issues)**
 - [ ] **Material Selection Guide: Match Your Project to the Right Filament**
@@ -216,6 +216,7 @@
 - [ ] **Embedding Electronics in 3D Prints: Pause-and-Insert Techniques for Functional Parts**
 - [ ] **How to Design Watertight 3D Prints: Sealing Techniques and Material Choices**
 - [ ] **Temperature Tower Calibration: Fine-Tuning Your Filament Settings for Perfect Prints**
+- [ ] **Designing Snap-Fit Enclosures: Box and Lid Designs That Stay Closed Without Hardware**
 
 ---
 
