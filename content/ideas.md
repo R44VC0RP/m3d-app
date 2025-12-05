@@ -28,7 +28,7 @@
 - [x] **TPU Flexible Filament: Perfect for Gaskets, Grips, and More**
 - [x] **Nylon 3D Printing: Strong Parts for Demanding Applications**
 - [ ] **Wood-Fill, Metal-Fill, and Specialty Filaments Explained**
-- [ ] **How Humidity Affects 3D Printing Filaments (And How to Prevent Issues)**
+- [x] **How Humidity Affects 3D Printing Filaments (And How to Prevent Issues)**
 - [ ] **Material Selection Guide: Match Your Project to the Right Filament**
 - [ ] **The Science Behind Filament Colors: Does Color Affect Print Quality?**
 
@@ -217,6 +217,7 @@
 - [ ] **How to Design Watertight 3D Prints: Sealing Techniques and Material Choices**
 - [ ] **Temperature Tower Calibration: Fine-Tuning Your Filament Settings for Perfect Prints**
 - [ ] **Designing Snap-Fit Enclosures: Box and Lid Designs That Stay Closed Without Hardware**
+- [ ] **First Layer Secrets: How Bed Leveling, Z-Offset, and Flow Rate Work Together for Perfect Adhesion**
 
 ---
 
